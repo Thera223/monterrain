@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957530271324",
+    "project_id": "terrain-223",
+    "storage_bucket": "terrain-223.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957530271324:android:9a7a2db13098870b7d0099",
+        "android_client_info": {
+          "package_name": "com.terrain.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgfJZXb5P4sXxfGYN6FUyQWujME9jk0rI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
