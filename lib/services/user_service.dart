@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class UserService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final CollectionReference<Map<String, dynamic>> _usersCollection =
       FirebaseFirestore.instance.collection('users');
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;    
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -28,6 +30,16 @@ class UserService extends ChangeNotifier {
     return null;
   }
 
+Future<void> saveUserToken(String userId) async {
+    // Obtenir le token de l'appareil de l'utilisateur
+    String? token = await _firebaseMessaging.getToken();
+    if (token != null) {
+      // Sauvegarder le token dans Firestore ou dans une base de données appropriée
+      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+        'token': token,
+      });
+    }
+  }
 
   // Ajouter un DEMANDEUR (lui-même) à Firestore après l'inscription
   Future<void> addDemandeur({
@@ -215,4 +227,32 @@ Future<List<Map<String, dynamic>>> getPersonnelsByChef(String chefId) async {
       return null;
     }
   }
+  // Ajoute cette méthode pour récupérer le nombre total d'utilisateurs
+  Future<int> getUsersCount() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
+      return querySnapshot
+          .size; // Retourne le nombre de documents (utilisateurs)
+    } catch (e) {
+      print("Erreur lors de la récupération du nombre d'utilisateurs : $e");
+      return 0;
+    }
+  }
+    // Récupérer le nombre de nouveaux utilisateurs ce mois-ci
+  Future<int> getNouveauxUtilisateursCeMois() async {
+    try {
+      DateTime now = DateTime.now();
+      DateTime startOfMonth = DateTime(now.year, now.month, 1);
+
+      QuerySnapshot snapshot = await _usersCollection
+          .where('createdAt', isGreaterThanOrEqualTo: startOfMonth)
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des nouveaux utilisateurs: $e');
+      return 0;
+    }
+  }
 }
+

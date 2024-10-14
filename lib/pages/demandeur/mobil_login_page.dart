@@ -164,108 +164,126 @@ class _LoginPageMobileState extends State<LoginPageMobile>
   }
 
 
-  Widget _buildRegisterForm(
-    AuthServiceMobile authService, UserService userService) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          controller: _nomController,
-          decoration: InputDecoration(
-            labelText: 'Nom',
-            prefixIcon: Icon(Icons.person_outline),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: _prenomController,
-          decoration: InputDecoration(
-            labelText: 'Prénom',
-            prefixIcon: Icon(Icons.person_outline),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: _adresseController,
-          decoration: InputDecoration(
-            labelText: 'Adresse',
-            prefixIcon: Icon(Icons.home_outlined),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: _emailController,
-          decoration: InputDecoration(
-            labelText: 'Email',
-            prefixIcon: Icon(Icons.email_outlined),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: _passwordController,
-          decoration: InputDecoration(
-            labelText: 'Mot de passe',
-            prefixIcon: Icon(Icons.lock_outline),
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscureTextRegister
-                    ? Icons.visibility_off
-                    : Icons.visibility,
+Widget _buildRegisterForm(
+      AuthServiceMobile authService, UserService userService) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
+    // Ajustements de tailles en fonction de la largeur de l'écran
+    double fieldFontSize = screenWidth > 600 ? 18 : 14;
+    double fieldPadding = screenWidth > 600 ? 16 : 12;
+    double buttonFontSize = screenWidth > 600 ? 18 : 16;
+
+    return SingleChildScrollView(
+      // Permet le défilement si le contenu est trop grand
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _nomController,
+              decoration: InputDecoration(
+                labelText: 'Nom',
+                labelStyle: TextStyle(fontSize: fieldFontSize),
+                prefixIcon: Icon(Icons.person_outline),
               ),
-              onPressed: () {
-                setState(() {
-                  _obscureTextRegister = !_obscureTextRegister;
-                });
+              style: TextStyle(fontSize: fieldFontSize),
+            ),
+            SizedBox(height: fieldPadding),
+            TextField(
+              controller: _prenomController,
+              decoration: InputDecoration(
+                labelText: 'Prénom',
+                labelStyle: TextStyle(fontSize: fieldFontSize),
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+              style: TextStyle(fontSize: fieldFontSize),
+            ),
+            SizedBox(height: fieldPadding),
+            TextField(
+              controller: _adresseController,
+              decoration: InputDecoration(
+                labelText: 'Adresse',
+                labelStyle: TextStyle(fontSize: fieldFontSize),
+                prefixIcon: Icon(Icons.home_outlined),
+              ),
+              style: TextStyle(fontSize: fieldFontSize),
+            ),
+            SizedBox(height: fieldPadding),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                labelStyle: TextStyle(fontSize: fieldFontSize),
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+              style: TextStyle(fontSize: fieldFontSize),
+            ),
+            SizedBox(height: fieldPadding),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                labelText: 'Mot de passe',
+                labelStyle: TextStyle(fontSize: fieldFontSize),
+                prefixIcon: Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureTextRegister
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureTextRegister = !_obscureTextRegister;
+                    });
+                  },
+                ),
+              ),
+              obscureText: _obscureTextRegister,
+              style: TextStyle(fontSize: fieldFontSize),
+            ),
+            SizedBox(height: fieldPadding * 2),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () async {
+                try {
+                  final user = await authService.registerWithEmail(
+                    _emailController.text,
+                    _passwordController.text,
+                    context,
+                  );
+                  if (user != null) {
+                    await userService.addDemandeur(
+                      email: _emailController.text,
+                      nom: _nomController.text,
+                      prenom: _prenomController.text,
+                      adresse: _adresseController.text,
+                      password: _passwordController.text,
+                    );
+                    _showSuccessDialog(context);
+                  }
+                } catch (e) {
+                  _showErrorDialog(context, e.toString());
+                }
               },
+              child: Text(
+                'inscrivez-vous',
+                style: TextStyle(color: Colors.white, fontSize: buttonFontSize),
+              ),
             ),
-          ),
-          obscureText: _obscureTextRegister,
+          ],
         ),
-        SizedBox(height: 20),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.purple,
-            padding: EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          onPressed: () async {
-            try {
-              // Inscription Firebase Auth
-              final user = await authService.registerWithEmail(
-                _emailController.text,
-                _passwordController.text,
-                context,
-              );
-              if (user != null) {
-                // Ajouter les informations utilisateur à Firestore
-                await userService.addDemandeur(
-                  email: _emailController.text,
-                  nom: _nomController.text,
-                  prenom: _prenomController.text,
-                  adresse: _adresseController.text,
-                  password: _passwordController.text,
-                );
-                // Afficher un message de succès
-                _showSuccessDialog(context);
-              }
-            } catch (e) {
-              // Afficher un message d'erreur en cas d'échec
-              _showErrorDialog(context, e.toString());
-            }
-          },
-          child: Text(
-            'inscrivez-vous',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
+
+
 
 // Fonction pour afficher un message de succès
 void _showSuccessDialog(BuildContext context) {

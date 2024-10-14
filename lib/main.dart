@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +23,10 @@ import 'package:terrain/pages/personnel/demande_pers.dart';
 import 'package:terrain/pages/personnel/home_per.dart';
 import 'package:terrain/pages/personnel/profil.dart';
 import 'package:terrain/pages/web_login_page.dart';
+import 'package:terrain/services/dashservice.dart';
 import 'package:terrain/services/demande_ser.dart';
 import 'package:terrain/services/dem_conseil_serv.dart'; // Service Conseil
+import 'package:terrain/services/fireb_notif.dart';
 import 'package:terrain/services/hist_service.dart';
 import 'package:terrain/services/parcelle_service.dart';
 import 'package:terrain/services/serviceAuthentification/auth_service_mobile.dart'; // Authentification mobile
@@ -36,13 +40,27 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
 
   // peuplerBaseDeDonnees();
 
   AuthServiceWeb authServiceWeb = AuthServiceWeb();
   await authServiceWeb.initializeAdminAccount();
-
+getToken();
+    FirebaseNotificationService notificationService =
+      FirebaseNotificationService();
+  notificationService.initialize();
+  // Configurer Firebase Messaging pour le web
+  if (kIsWeb) {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission();
+  }
   runApp(MyApp());
+}
+
+void getToken() async {
+  String? token = await FirebaseMessaging.instance.getToken();
+  print("Firebase Token: $token");
 }
 
 class MyApp extends StatelessWidget {
@@ -77,8 +95,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<LogService>(
           create: (_) => LogService(),
         ),
+        ChangeNotifierProvider<DashboardService>(
+          create: (_) => DashboardService(),
+        ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Gestion de Parcelles',
         theme: ThemeData(primarySwatch: Colors.blue),
         initialRoute: '/', // Point d'entrée de l'application

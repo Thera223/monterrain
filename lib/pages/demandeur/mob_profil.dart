@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:terrain/widgets/contenudahchef.dart';
+// Chemin vers la barre de navigation personnalisée
 
 class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    int _currentIndex = 3; // Profil est actif
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -10,7 +14,7 @@ class ProfilePage extends StatelessWidget {
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
-          '',
+          'Mon Profil',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -24,92 +28,62 @@ class ProfilePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 20),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
-              // Avatar
-              CircleAvatar(
-                radius: 40,
-                backgroundColor: Colors.purple,
-                child: Icon(Icons.person, size: 40, color: Colors.white),
+              // Avatar avec animation
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: CircleAvatar(
+                  radius: MediaQuery.of(context).size.width > 600 ? 60 : 40,
+                  backgroundColor: Colors.purple,
+                  child: Icon(Icons.person,
+                      size: MediaQuery.of(context).size.width > 600 ? 60 : 40,
+                      color: Colors.white),
+                ),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
-              // Ligne de séparation avec indicateur
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.circle, size: 8, color: Colors.purple),
-                ],
+              // Ligne de séparation avec indicateur animé
+              AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.purple,
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
 
               // Champ Nom
-              TextFormField(
-                initialValue: 'Jean Dupont', // Nom de l'utilisateur
-                decoration: InputDecoration(
-                  labelText: 'Nom',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                ),
-              ),
+              _buildProfileField('Nom', 'Jean Dupont', Icons.person_outline,
+                  MediaQuery.of(context).size.width),
 
-              SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
               // Champ Email
-              TextFormField(
-                initialValue:
-                    'jean.dupont@example.com', // Email de l'utilisateur
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                ),
-              ),
+              _buildProfileField('E-mail', 'jean.dupont@example.com',
+                  Icons.email_outlined, MediaQuery.of(context).size.width),
 
-              SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
-              // Champ Mot de passe
-              TextFormField(
-                initialValue: '********', // Masquer le mot de passe
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe',
-                  suffixIcon:
-                      Icon(Icons.remove_red_eye_outlined, color: Colors.purple),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                ),
-              ),
+              // Champ Mot de passe avec option de visibilité
+              _buildPasswordField('Mot de passe', '********',
+                  MediaQuery.of(context).size.width),
 
-              SizedBox(height: 16),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
               // Champ Téléphone
-              TextFormField(
-                initialValue: '+33 6 12 34 56 78', // Téléphone de l'utilisateur
-                decoration: InputDecoration(
-                  labelText: 'Téléphone',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                ),
-              ),
+              _buildProfileField('Téléphone', '+33 6 12 34 56 78',
+                  Icons.phone_outlined, MediaQuery.of(context).size.width),
 
-              SizedBox(height: 30),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
 
-              // Bouton Se déconnecter
+              // Bouton Se déconnecter avec animation
               ElevatedButton.icon(
                 onPressed: () {
                   // Logique pour se déconnecter
@@ -119,7 +93,9 @@ class ProfilePage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple.withOpacity(0.1),
                   foregroundColor: Colors.purple,
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.1,
+                      vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -130,18 +106,16 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: 30),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             ],
           ),
         ),
       ),
 
-      // Barre de navigation inférieure
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3, // Profil actif
-        selectedItemColor: Colors.purple,
-        unselectedItemColor: Colors.grey,
-        onTap: (int index) {
+      // Barre de navigation inférieure personnalisée
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTabTapped: (int index) {
           switch (index) {
             case 0:
               Navigator.pushNamed(context, '/dashboard');
@@ -156,24 +130,39 @@ class ProfilePage extends StatelessWidget {
               break; // Déjà sur la page Profil
           }
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment),
-            label: 'Demande',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.support_agent),
-            label: 'Conseils',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      ),
+    );
+  }
+
+  // Fonction utilitaire pour construire un champ de profil
+  Widget _buildProfileField(
+      String label, String value, IconData icon, double screenWidth) {
+    return TextFormField(
+      initialValue: value,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      ),
+    );
+  }
+
+  // Fonction utilitaire pour construire un champ mot de passe
+  Widget _buildPasswordField(String label, String value, double screenWidth) {
+    return TextFormField(
+      initialValue: value,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(Icons.lock_outline),
+        suffixIcon: Icon(Icons.remove_red_eye_outlined, color: Colors.purple),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }

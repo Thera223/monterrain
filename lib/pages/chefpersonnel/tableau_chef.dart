@@ -205,40 +205,7 @@ class _ChefDashboardPageState extends State<ChefDashboardPage> {
     ];
   }
 
-  // // Liste des demandes
-  // Widget _buildDemandesList() {
-  //   return FutureBuilder(
-  //     future: Provider.of<DemandeService>(context, listen: false)
-  //         .getDemandesByLocalite(widget.localite),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return Center(child: CircularProgressIndicator());
-  //       } else if (snapshot.hasError) {
-  //         return Center(child: Text('Erreur : ${snapshot.error}'));
-  //       } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-  //         return Center(child: Text('Aucune demande trouvée.'));
-  //       } else {
-  //         final demandes = snapshot.data as List;
-  //         return ListView.builder(
-  //           itemCount: demandes.length,
-  //           itemBuilder: (context, index) {
-  //             final demande = demandes[index];
-  //             return ListTile(
-  //               title: Text(demande['description']),
-  //               subtitle: Text('Statut : ${demande['statut']}'),
-  //               trailing: ElevatedButton(
-  //                 child: Text('Assigner'),
-  //                 onPressed: () {
-  //                   _showAssignDialog(context, demande['id']);
-  //                 },
-  //               ),
-  //             );
-  //           },
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
+
 
   // Boîte de dialogue pour assigner une demande
   void _showAssignDialog(BuildContext context, String demandeId) {
@@ -296,3 +263,313 @@ class ChartData {
 
   ChartData(this.personnel, this.demandesTraitees);
 }
+
+//10000000000
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:provider/provider.dart';
+// import 'package:syncfusion_flutter_charts/charts.dart';
+// import 'package:terrain/pages/chefpersonnel/chef_user_page.dart';
+// import 'package:terrain/pages/chefpersonnel/demandechef.dart';
+// import 'package:terrain/services/dashservice.dart'; // Service pour récupérer les données du tableau de bord
+// // Exemple pour une autre page
+
+// class ChefDashboardPage extends StatefulWidget {
+//   final String localite;
+
+//   ChefDashboardPage({required this.localite});
+
+//   @override
+//   _ChefDashboardPageState createState() => _ChefDashboardPageState();
+// }
+
+// class _ChefDashboardPageState extends State<ChefDashboardPage> {
+//   int totalPersonnel = 0;
+//   int totalDemandeurs = 0;
+//   int totalDemandesRecues = 0;
+//   int totalDemandesAssignees = 0;
+//   int totalDemandesEnAttente = 0;
+//   int totalDemandesEnCours = 0;
+//   int totalDemandesRepondues = 0;
+//   List<PersonnelPerfData> personnelPerformance = [];
+//   bool isLoading = true;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadDashboardData();
+//   }
+
+//   Future<void> _loadDashboardData() async {
+//     final dashboardService =
+//         Provider.of<DashboardService>(context, listen: false);
+
+//     try {
+//       totalPersonnel =
+//           await dashboardService.getTotalPersonnelByLocalite(widget.localite);
+//       totalDemandeurs =
+//           await dashboardService.getTotalDemandeursByLocalite(widget.localite);
+//       totalDemandesRecues =
+//           await dashboardService.getTotalDemandesByLocalite(widget.localite);
+//       totalDemandesAssignees =
+//           await dashboardService.getTotalDemandesAssignees(widget.localite);
+//       totalDemandesEnAttente = await dashboardService.getTotalDemandesByStatut(
+//           'En attente', widget.localite);
+//       totalDemandesEnCours = await dashboardService.getTotalDemandesByStatut(
+//           'En cours', widget.localite);
+//       totalDemandesRepondues = await dashboardService.getTotalDemandesByStatut(
+//           'Répondu', widget.localite);
+
+//       personnelPerformance = (await dashboardService
+//               .getPersonnelPerformanceByLocalite(widget.localite))
+//           .cast<PersonnelPerfData>();
+
+//       setState(() {
+//         isLoading = false;
+//       });
+//     } catch (e) {
+//       setState(() {
+//         isLoading = false;
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Tableau de bord du Chef de Personnel'),
+//       ),
+//       drawer: _buildDrawer(), // Ajouter un Drawer pour la navigation
+//       body: isLoading
+//           ? Center(child: CircularProgressIndicator())
+//           : Padding(
+//               padding: const EdgeInsets.all(16.0),
+//               child: SingleChildScrollView(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text('Statistiques générales',
+//                         style: TextStyle(
+//                             fontSize: 20, fontWeight: FontWeight.bold)),
+//                     SizedBox(height: 10),
+//                     _buildStatCards(),
+//                     SizedBox(height: 20),
+//                     Text('Comparaison des demandes',
+//                         style: TextStyle(
+//                             fontSize: 20, fontWeight: FontWeight.bold)),
+//                     SizedBox(height: 10),
+//                     _buildComparisonChart(),
+//                     SizedBox(height: 20),
+//                     Text('Performances du personnel',
+//                         style: TextStyle(
+//                             fontSize: 20, fontWeight: FontWeight.bold)),
+//                     SizedBox(height: 10),
+//                     _buildPersonnelPerformanceChart(),
+//                     SizedBox(height: 20),
+//                     Text('Top Personnel par performance',
+//                         style: TextStyle(
+//                             fontSize: 20, fontWeight: FontWeight.bold)),
+//                     SizedBox(height: 10),
+//                     _buildTopPersonnelList(),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//     );
+//   }
+
+//   // Fonction pour construire le Drawer (sidebar)
+//   Drawer _buildDrawer() {
+//     return Drawer(
+//       child: ListView(
+//         padding: EdgeInsets.zero,
+//         children: <Widget>[
+//           DrawerHeader(
+//             decoration: BoxDecoration(
+//               color: Colors.blue,
+//             ),
+//             child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Icon(Icons.person, size: 50, color: Colors.white),
+//                 SizedBox(height: 10),
+//                 Text(
+//                   'Chef de Personnel',
+//                   style: TextStyle(color: Colors.white, fontSize: 18),
+//                 ),
+//                 Text(
+//                   FirebaseAuth.instance.currentUser?.email ?? '',
+//                   style: TextStyle(color: Colors.white, fontSize: 14),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           ListTile(
+//             leading: Icon(Icons.dashboard),
+//             title: Text('Tableau de bord'),
+//             onTap: () {
+//               Navigator.pushReplacement(
+//                 context,
+//                 MaterialPageRoute(
+//                     builder: (context) =>
+//                         ChefDashboardPage(localite: widget.localite)),
+//               );
+//             },
+//           ),
+//           ListTile(
+//             leading: Icon(Icons.list),
+//             title: Text('Demandes'),
+//             onTap: () {
+//               Navigator.pushReplacement(
+//                 context,
+//                 MaterialPageRoute(
+//                     builder: (context) =>
+//                         ChefPersonnelDemandesPage()), // Exemple d'une autre page
+//               );
+//             },
+//           ),
+//             ListTile(
+//             leading: Icon(Icons.person),
+//             title: Text('Utilisateur'),
+//             onTap: () {
+//               Navigator.pushReplacement(
+//                 context,
+//                 MaterialPageRoute(
+//                     builder: (context) =>
+//                         PersonnelManagementPage()), // Exemple d'une autre page
+//               );
+//             },
+//           ),
+//           Divider(),
+//           ListTile(
+//             leading: Icon(Icons.logout),
+//             title: Text('Déconnexion'),
+//             onTap: () {
+//               FirebaseAuth.instance.signOut();
+//               Navigator.pushReplacementNamed(context, '/');
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildStatCards() {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         _buildStatCard(
+//             'Personnel total', '$totalPersonnel', Icons.group, Colors.blue),
+//         _buildStatCard('Demandeurs total', '$totalDemandeurs', Icons.person,
+//             Colors.orange),
+//         _buildStatCard('Demandes reçues', '$totalDemandesRecues', Icons.inbox,
+//             Colors.green),
+//       ],
+//     );
+//   }
+
+//   Widget _buildStatCard(
+//       String title, String count, IconData icon, Color color) {
+//     return Card(
+//       elevation: 5,
+//       color: Colors.white,
+//       child: Container(
+//         width: 120,
+//         padding: EdgeInsets.all(16),
+//         child: Column(
+//           children: [
+//             Icon(icon, size: 40, color: color),
+//             SizedBox(height: 10),
+//             Text(title, style: TextStyle(fontSize: 16)),
+//             SizedBox(height: 10),
+//             Text(count,
+//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+
+//   Widget _buildComparisonChart() {
+//     return SfCartesianChart(
+//       primaryXAxis: CategoryAxis(),
+//       title: ChartTitle(text: 'Demandes reçues vs répondus'),
+//       series: <CartesianSeries>[
+//         BarSeries<DemandeChartData, String>(
+//           dataSource: [
+//             DemandeChartData('Reçues', totalDemandesRecues),
+//             DemandeChartData('Répondues', totalDemandesRepondues),
+//           ],
+//           xValueMapper: (DemandeChartData data, _) => data.label,
+//           yValueMapper: (DemandeChartData data, _) => data.value,
+//           color: Colors.blue,
+//         ),
+//       ],
+//     );
+//   }
+
+//   Widget _buildPersonnelPerformanceChart() {
+//     return SfCartesianChart(
+//       primaryXAxis: CategoryAxis(),
+//       title: ChartTitle(text: 'Performances du personnel'),
+//       series: <CartesianSeries>[
+//         BarSeries<PersonnelPerfData, String>(
+//           dataSource: personnelPerformance,
+//           xValueMapper: (PersonnelPerfData data, _) => data.personnelName,
+//           yValueMapper: (PersonnelPerfData data, _) => data.demandesTraitees,
+//           color: Colors.orange,
+//         ),
+//       ],
+//     );
+//   }
+
+//   Widget _buildTopPersonnelList() {
+//     return ListView.builder(
+//       shrinkWrap: true,
+//       itemCount: personnelPerformance.length,
+//       itemBuilder: (context, index) {
+//         final personnel = personnelPerformance[index];
+//         return ListTile(
+//           leading: Icon(Icons.person),
+//           title: Text(personnel.personnelName),
+//           trailing: Text('${personnel.demandesTraitees} demandes traitées'),
+//         );
+//       },
+//     );
+//   }
+// }
+
+// // Modèle pour les données du graphique de comparaison
+// class DemandeChartData {
+//   final String label;
+//   final int value;
+
+//   DemandeChartData(this.label, this.value);
+// }
+
+// // Modèle pour les performances du personnel
+// class PersonnelPerfData {
+//   final String personnelName;
+//   final int demandesTraitees;
+
+//   PersonnelPerfData(this.personnelName, this.demandesTraitees);
+// }
+
+// // Exemple d'une autre page pour la navigation
+// class OtherPage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text('Autre page'),
+//       ),
+//       body: Center(
+//         child: Text('Page des demandes ou autres.'),
+//       ),
+//     );
+//   }
+// }

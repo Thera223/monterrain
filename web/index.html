@@ -10,5 +10,17 @@
   </head>
   <body>
     <script src="main.dart.js" type="application/javascript"></script>
+    <!-- Register the service worker for Firebase Messaging -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then(function(registration) {
+      console.log('Service Worker registered with scope:', registration.scope);
+    }).catch(function(err) {
+      console.log('Service Worker registration failed:', err);
+    });
+  }
+</script>
+
   </body>
 </html>

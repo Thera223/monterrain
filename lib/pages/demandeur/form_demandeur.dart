@@ -145,81 +145,274 @@ Future<void> _submitDemande() async {
 
 
 
-  // Étape 1 : Informations sur le propriétaire et la parcelle
-  Widget _buildStep1() {
+// Étape 1 : Informations sur le propriétaire et la parcelle
+ // Étape 1 : Informations sur le propriétaire et la parcelle
+ Widget _buildStep1() {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
+
+    // Ajuster les tailles et marges selon la taille de l'écran
+    double fieldFontSize =
+        screenWidth > 600 ? 18 : 14; // Grand écran, taille de texte
+    double fieldPadding =
+        screenWidth > 600 ? 10 : 5; // Espacement en fonction de l'écran
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTextFormField(
-            _nomProprietaireController, 'Nom complet du propriétaire'),
-        _buildTextFormField(
-            _lieuNaissanceController, 'Lieu et date de naissance'),
-        _buildTextFormField(
-            _adresseProprietaireController, 'Adresse du propriétaire'),
-        _buildTextFormField(_cinNinaController, 'Numéro CIN ou NINA'),
-        _buildTextFormField(_numParcelleController, 'Numéro de la parcelle'),
-        _buildTextFormField(
-            _numFoliosController, 'Numéro d’enregistrement folios'),
-        _buildTextFormField(_superficieController, 'Superficie du terrain'),
-        _buildTextFormField(_lieuParcelleController, 'Lieu de la parcelle'),
+        Row(
+          children: [
+            Icon(Icons.person,
+                size: 24, color: Colors.purple), // Icône du formulaire
+            SizedBox(width: 8), // Espacement
+            Expanded(
+              // Utilisation de Expanded pour ajuster le texte
+              child: Text(
+                'Informations sur le propriétaire et la parcelle :',
+                style: TextStyle(
+                  fontSize: screenWidth > 600
+                      ? 18
+                      : 16, // Adaptation de la taille du texte
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple,
+                ),
+                overflow:
+                    TextOverflow.ellipsis, // Empêcher le débordement de texte
+                maxLines: 2, // Limiter à deux lignes si nécessaire
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: 16),
+
+        // Champs pour les informations du propriétaire et de la parcelle
+        _buildTextFormField(
+          _nomProprietaireController,
+          'Nom complet du propriétaire',
+          icon: Icons.account_circle, // Icône pour le nom
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _lieuNaissanceController,
+          'Lieu et date de naissance',
+          icon: Icons.cake, // Icône pour la naissance
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _adresseProprietaireController,
+          'Adresse du propriétaire',
+          icon: Icons.home, // Icône pour l'adresse
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _cinNinaController,
+          'Numéro CIN ou NINA',
+          icon: Icons.credit_card, // Icône pour CIN ou NINA
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _numParcelleController,
+          'Numéro de la parcelle',
+          icon: Icons.location_on, // Icône pour numéro de la parcelle
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _numFoliosController,
+          'Numéro d’enregistrement folios',
+          icon: Icons.folder, // Icône pour le numéro folios
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _superficieController,
+          'Superficie du terrain',
+          icon: Icons.landscape, // Icône pour la superficie
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 10),
+
+        _buildTextFormField(
+          _lieuParcelleController,
+          'Lieu de la parcelle',
+          icon: Icons.map, // Icône pour lieu de la parcelle
+          fontSize: fieldFontSize,
+          padding: fieldPadding,
+        ),
+        SizedBox(height: 16),
+
         // Champ Localité
-        DropdownButtonFormField<String>(
-          value: _selectedLocalite,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedLocalite = newValue;
-            });
-          },
-          items: ['Bamako', 'Kati', 'Kayes', 'Koulikoro', 'Segou']
-              .map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          decoration: InputDecoration(
-              labelText: 'Localité', border: OutlineInputBorder()),
+        Row(
+          children: [
+            Icon(Icons.location_city,
+                size: 24, color: Colors.purple), // Icône pour localité
+            SizedBox(width: 8),
+            Expanded(
+              child: DropdownButtonFormField<String>(
+                value: _selectedLocalite,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedLocalite = newValue;
+                  });
+                },
+                items: ['Bamako', 'Kati', 'Kayes', 'Koulikoro', 'Segou']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Localité',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
   }
 
-  // Étape 2 : Sélection du type de demande (avec sélection multiple)
+
+
+
+
+// Fonction utilitaire pour construire des champs de texte avec icônes
+  
+
+// Étape 2 : Sélection du type de demande (avec sélection multiple)
   Widget _buildStep2() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Sélectionnez les types de demande :',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Icon(Icons.assignment,
+                size: 24, color: Colors.purple), // Icône à côté du titre
+            SizedBox(width: 8), // Espacement
+            Text(
+              'Sélectionnez les types de demande :',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.purple,
+              ),
+            ),
+          ],
         ),
+        SizedBox(height: 16),
+
+        // Boucle à travers les types de demande
         for (var typeDemande in typesDeDemande)
-          CheckboxListTile(
-            title: Text('${typeDemande['type']} (${typeDemande['cost']}€)'),
-            value: typeDemande['selected'],
-            onChanged: (bool? value) {
-              setState(() {
-                typeDemande['selected'] = value!;
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(
+                vertical: 8.0), // Espacement entre les options
+            child: CheckboxListTile(
+              activeColor: Colors.purple, // Couleur pour la case cochée
+              title: Row(
+                children: [
+                  // Icône différente selon le type de demande
+                  Icon(
+                    typeDemande['type'] == 'Vérification titre de propriété'
+                        ? Icons.verified_user // Icône de vérification
+                        : typeDemande['type'] == 'Litige foncier'
+                            ? Icons.gavel // Icône pour le litige
+                            : Icons.history, // Icône pour l'historique
+                    color: Colors.blueAccent, // Couleur des icônes
+                    size: 24,
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '${typeDemande['type']} (${typeDemande['cost']}€)', // Texte de l'option
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow
+                          .ellipsis, // Limite si le texte est trop long
+                    ),
+                  ),
+                ],
+              ),
+              value: typeDemande['selected'],
+              onChanged: (bool? value) {
+                setState(() {
+                  typeDemande['selected'] = value!;
+                });
+              },
+            ),
           ),
       ],
     );
   }
 
-  // Étape 3 : Paiement
+
+// Étape 3 : Paiement
   Widget _buildStep3() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Montant total à payer : ${_calculateTotalCost()}€',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        // Affichage du montant total avec un style plus accentué
+        Row(
+          children: [
+            Icon(Icons.attach_money,
+                size: 24, color: Colors.green), // Icône pour le montant
+            SizedBox(width: 8), // Espacement
+            Text(
+              'Montant total à payer : ${_calculateTotalCost()}€',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: 16),
-        Text('Sélectionnez le mode de paiement :',
-            style: TextStyle(fontSize: 16)),
+
+        // Sélection du mode de paiement
+        Text(
+          'Sélectionnez le mode de paiement :',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.purple,
+          ),
+        ),
+        SizedBox(height: 16),
+
+        // Option Carte Bancaire avec une icône et une image
         RadioListTile<String>(
-          title: Text('Carte bancaire'),
+          title: Row(
+            children: [
+              Icon(Icons.credit_card,
+                  color: Colors.blue, size: 30), // Icône de carte bancaire
+              SizedBox(width: 10), // Espacement
+              Text(
+                'Carte bancaire',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
           value: 'Carte bancaire',
           groupValue: _selectedPaymentMethod,
           onChanged: (value) {
@@ -227,9 +420,23 @@ Future<void> _submitDemande() async {
               _selectedPaymentMethod = value;
             });
           },
+          activeColor: Colors.purple, // Couleur d'accent pour la sélection
         ),
+        SizedBox(height: 10),
+
+        // Option Mobile Money avec une icône et une image
         RadioListTile<String>(
-          title: Text('Mobile Money'),
+          title: Row(
+            children: [
+              Icon(Icons.smartphone,
+                  color: Colors.orange, size: 30), // Icône de mobile
+              SizedBox(width: 10), // Espacement
+              Text(
+                'Mobile Money',
+                style: TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
           value: 'Mobile Money',
           groupValue: _selectedPaymentMethod,
           onChanged: (value) {
@@ -237,10 +444,12 @@ Future<void> _submitDemande() async {
               _selectedPaymentMethod = value;
             });
           },
+          activeColor: Colors.purple, // Couleur d'accent pour la sélection
         ),
       ],
     );
   }
+
 
   // Étape 4 : Confirmation et envoi des données
   Widget _buildStep4() {
@@ -286,6 +495,7 @@ Future<void> _submitDemande() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.purple,
         title: Text('Soumission de demande'),
       ),
       body: SingleChildScrollView(
@@ -342,16 +552,26 @@ Future<void> _submitDemande() async {
   }
 
   // Fonction utilitaire pour construire des champs de texte avec padding
-  Widget _buildTextFormField(TextEditingController controller, String label) {
+// Fonction utilitaire pour construire des champs de texte avec icônes
+  Widget _buildTextFormField(TextEditingController controller, String label,
+      {IconData? icon, required double fontSize, required double padding}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: padding),
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
+          prefixIcon:
+              Icon(icon, color: Colors.purple), // Ajout d'icône personnalisée
           labelText: label,
-          border: OutlineInputBorder(),
+          labelStyle: TextStyle(fontSize: fontSize),
+          filled: true,
+          fillColor: Colors.purple[50], // Couleur de fond légère
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10), // Coins arrondis
+          ),
         ),
       ),
     );
   }
+
 }

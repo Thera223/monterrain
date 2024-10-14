@@ -1,11 +1,55 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"terrain-223","appId":"1:957530271324:android:9a7a2db13098870b7d0099","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"terrain-223","configurations":{"android":"1:957530271324:android:9a7a2db13098870b7d0099","ios":"1:957530271324:ios:5946a7609b4e084b7d0099","macos":"1:957530271324:ios:5946a7609b4e084b7d0099","web":"1:957530271324:web:5c51bd3b3ced51ae7d0099","windows":"1:957530271324:web:8267aa4d89bef8927d0099","hosting": {
-    "public": "web",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "terrain-223",
+          "appId": "1:957530271324:android:9a7a2db13098870b7d0099",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "terrain-223",
+          "configurations": {
+            "android": "1:957530271324:android:9a7a2db13098870b7d0099",
+            "ios": "1:957530271324:ios:5946a7609b4e084b7d0099",
+            "macos": "1:957530271324:ios:5946a7609b4e084b7d0099",
+            "web": "1:957530271324:web:5c51bd3b3ced51ae7d0099",
+            "windows": "1:957530271324:web:8267aa4d89bef8927d0099",
+            "hosting": {
+              "public": "web",
+              "ignore": [
+                "firebase.json",
+                "**/.*",
+                "**/node_modules/**"
+              ],
+              "rewrites": [
+                {
+                  "source": "**",
+                  "destination": "/index.html"
+                }
+              ]
+            }
+          }
+        }
       }
-    ]
-  }}}}}}}
-
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        
+      ]
+    }
+  ]
+}

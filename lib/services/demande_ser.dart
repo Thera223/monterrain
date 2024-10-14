@@ -287,5 +287,121 @@ void traiterDemande(BuildContext context, Demande demande) {
       ),
     );
   }
+  // Méthode pour obtenir le nombre total de demandes
+  Future<int> getTotalRequests() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('demandes').get();
+      return querySnapshot.size;
+    } catch (e) {
+      print("Erreur lors de la récupération du nombre de demandes : $e");
+      return 0;
+    }
+  }
 
+  // Méthode pour obtenir le nombre total de réponses (statut 'Répondu')
+  Future<int> getTotalResponses() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('demandes')
+          .where('statut', isEqualTo: 'Répondu')
+          .get();
+      return querySnapshot.size;
+    } catch (e) {
+      print("Erreur lors de la récupération des réponses : $e");
+      return 0;
+    }
+  }
+
+
+
+
+
+
+  // Récupérer le nombre total de demandes en cours
+  Future<int> getTotalDemandesEnCours() async {
+    try {
+      QuerySnapshot snapshot = await demandeCollection
+          .where('statut', isEqualTo: 'En cours')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des demandes en cours: $e');
+      return 0;
+    }
+  }
+
+  // Récupérer le nombre total de demandes en attente
+  Future<int> getTotalDemandesEnAttente() async {
+    try {
+      QuerySnapshot snapshot = await demandeCollection
+          .where('statut', isEqualTo: 'En attente')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des demandes en attente: $e');
+      return 0;
+    }
+  }
+
+  // Récupérer le nombre total de demandes refusées
+  Future<int> getTotalDemandesRefusees() async {
+    try {
+      QuerySnapshot snapshot = await demandeCollection
+          .where('statut', isEqualTo: 'Refusée')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des demandes refusées: $e');
+      return 0;
+    }
+  }
+
+  // Récupérer le nombre total de parcelles vérifiées
+  Future<int> getTotalParcellesVerifiees() async {
+    try {
+      QuerySnapshot snapshot = await demandeCollection
+          .where('typeDemande', arrayContains: 'Vérification')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des parcelles vérifiées: $e');
+      return 0;
+    }
+  }
+
+  // Récupérer le nombre total de parcelles avec litige
+  Future<int> getTotalParcellesAvecLitige() async {
+    try {
+      QuerySnapshot snapshot = await demandeCollection
+          .where('typeDemande', arrayContains: 'Litige foncier')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des parcelles avec litige: $e');
+      return 0;
+    }
+  }
+
+  // Récupérer le nombre total de demandeurs actifs
+  Future<int> getTotalDemandeursActifs() async {
+    try {
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('role', isEqualTo: 'demandeur')
+          .get();
+      return snapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération des demandeurs actifs: $e');
+      return 0;
+    }
+  }
 }
+
+
+
+
+
+
+
+  

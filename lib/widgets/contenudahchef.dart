@@ -1,97 +1,108 @@
-// import 'package:flutter/material.dart';
-// import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter/material.dart';
 
-// Widget _buildDashboardContent() {
-//   return Padding(
-//     padding: const EdgeInsets.all(16.0),
-//     child: Column(
-//       children: [
-//         // Statistiques des demandes
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             _buildStatCard(
-//                 'Demandes en attente', '20', Icons.pending, Colors.orange),
-//             _buildStatCard('Demandes en cours', '15', Icons.work, Colors.blue),
-//             _buildStatCard(
-//                 'Demandes terminées', '50', Icons.check_circle, Colors.green),
-//           ],
-//         ),
-//         SizedBox(height: 20),
-//         Expanded(
-//           child: SfCartesianChart(
-//             primaryXAxis: CategoryAxis(),
-//             title: ChartTitle(text: 'Performances du personnel'),
-//             legend: Legend(isVisible: true),
-//             series: <BarSeries>[
-//               BarSeries<ChartData, String>(
-//                 dataSource: _getPersonnelPerformanceData(),
-//                 xValueMapper: (ChartData data, _) => data.personnel,
-//                 yValueMapper: (ChartData data, _) => data.demandesTraitees,
-//                 name: 'Demandes traitées',
-//                 color: Colors.blue,
-//               ),
-//             ],
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
+class CustomBottomNavBar extends StatefulWidget {
+  final int currentIndex;
+  final Function(int) onTabTapped;
 
-// // Fonction pour créer une carte statistique
-// Widget _buildStatCard(String title, String count, IconData icon, Color color) {
-//   return Card(
-//     elevation: 5,
-//     child: Container(
-//       width: 120, // Largeur de chaque carte
-//       padding: EdgeInsets.all(16.0),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(
-//             icon,
-//             size: 40,
-//             color: color,
-//           ),
-//           SizedBox(height: 10),
-//           Text(
-//             title,
-//             style: TextStyle(
-//               fontSize: 14,
-//               fontWeight: FontWeight.bold,
-//             ),
-//             textAlign: TextAlign.center,
-//           ),
-//           SizedBox(height: 10),
-//           Text(
-//             count,
-//             style: TextStyle(
-//               fontSize: 22,
-//               fontWeight: FontWeight.bold,
-//               color: color,
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }
+  CustomBottomNavBar({required this.currentIndex, required this.onTabTapped});
 
-// // Exemple de données de performance du personnel
-// List<ChartData> _getPersonnelPerformanceData() {
-//   return [
-//     ChartData('Personnel 1', 15),
-//     ChartData('Personnel 2', 20),
-//     ChartData('Personnel 3', 30),
-//   ];
-// }
+  @override
+  _CustomBottomNavBarState createState() => _CustomBottomNavBarState();
+}
 
-// class ChartData {
-//   final String personnel;
-//   final int demandesTraitees;
+class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
+  @override
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
 
-//   ChartData(this.personnel, this.demandesTraitees);
-// }
-
-
+    return BottomNavigationBar(
+      currentIndex: widget.currentIndex,
+      onTap: widget.onTabTapped,
+      selectedItemColor: Colors.purple,
+      unselectedItemColor: Colors.grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      items: [
+        BottomNavigationBarItem(
+          icon: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: widget.currentIndex == 0
+                  ? Colors.purple.withOpacity(0.2)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.home,
+              color: widget.currentIndex == 0 ? Colors.purple : Colors.grey,
+              size: screenWidth * 0.07,
+            ),
+          ),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: widget.currentIndex == 1
+                  ? Colors.purple.withOpacity(0.2)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.assignment,
+              color: widget.currentIndex == 1
+                  ? const Color.fromARGB(255, 156, 39, 176)
+                  : Colors.grey,
+              size: screenWidth * 0.07,
+            ),
+          ),
+          label: 'Demande',
+        ),
+        BottomNavigationBarItem(
+          icon: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: widget.currentIndex == 2
+                  ? Colors.purple.withOpacity(0.2)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.support_agent,
+              color: widget.currentIndex == 2 ? Colors.purple : Colors.grey,
+              size: screenWidth * 0.07,
+            ),
+          ),
+          label: 'Conseils',
+        ),
+        BottomNavigationBarItem(
+          icon: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            decoration: BoxDecoration(
+              color: widget.currentIndex == 3
+                  ? Colors.purple.withOpacity(0.2)
+                  : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.person,
+              color: widget.currentIndex == 3 ? Colors.purple : Colors.grey,
+              size: screenWidth * 0.07,
+            ),
+          ),
+          label: 'Profil',
+        ),
+      ],
+    );
+  }
+}
