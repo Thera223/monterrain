@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 
 class CustomNavigationSidebar extends StatelessWidget {
   final Function(int) onItemTapped;
@@ -58,7 +59,7 @@ class CustomNavigationSidebar extends StatelessWidget {
                 index: 3,
                 onItemTapped: onItemTapped,
                 selectedIndex: selectedIndex,
-                isSelectedColor: Colors.purple, // Coloration pour cet item
+                isSelectedColor: couleurprincipale, // Coloration pour cet item
               ),
               _buildNavItem(
                 title: 'Historique',

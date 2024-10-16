@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/dem_conseil_serv.dart';
 import 'package:terrain/widgets/contenudahchef.dart';
 
@@ -46,7 +47,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.purple,
+        backgroundColor: couleurprincipale,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
       ),
@@ -55,7 +56,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-                child: CircularProgressIndicator(color: Colors.purple));
+                child: CircularProgressIndicator(color: couleurprincipale));
           }
 
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -113,7 +114,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
                             Row(
                               children: [
                                 Icon(Icons.business,
-                                    color: Colors.purple, size: 22),
+                                    color: couleurprincipale, size: 22),
                                 SizedBox(width: 6),
                                 Expanded(
                                   child: Text(
@@ -189,7 +190,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
                                 },
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(vertical: 10),
-                                  backgroundColor: Colors.purple,
+                                  backgroundColor: couleurprincipale,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -215,7 +216,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
           );
         },
       ),
-     bottomNavigationBar: CustomBottomNavBar(
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTabTapped: onTabTapped,
       ),

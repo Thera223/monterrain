@@ -74,7 +74,7 @@
 //           SizedBox(height: 20),
 //           ElevatedButton(
 //             style: ElevatedButton.styleFrom(
-//               backgroundColor: Colors.purple,
+//               backgroundColor:couleurprincipale,
 //               padding: EdgeInsets.symmetric(vertical: 16),
 //               shape: RoundedRectangleBorder(
 //                 borderRadius: BorderRadius.circular(10),

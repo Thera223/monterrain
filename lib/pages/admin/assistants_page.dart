@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:terrain/pages/admin/form_assis.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/assistantjuriduque_service.dart';
 
 class AssistantsPage extends StatelessWidget {
@@ -28,7 +29,7 @@ class AssistantsPage extends StatelessWidget {
                 style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: couleurprincipale,
                 padding: EdgeInsets.symmetric(horizontal: 16.0),
               ),
             ),
@@ -55,7 +56,7 @@ class AssistantsPage extends StatelessWidget {
                 // Entête du tableau
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8.0),
-                  color: Colors.deepPurple[50],
+                  color: const Color.fromARGB(255, 121, 41, 241),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -177,7 +178,7 @@ class EditAssistantForm extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Modifier l\'Assistant Juridique'),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: couleurprincipale,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -218,7 +219,7 @@ class EditAssistantForm extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
+                backgroundColor: couleurprincipale,
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),

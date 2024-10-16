@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final int currentIndex;
@@ -18,7 +19,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     return BottomNavigationBar(
       currentIndex: widget.currentIndex,
       onTap: widget.onTabTapped,
-      selectedItemColor: Colors.purple,
+      selectedItemColor: couleurprincipale,
       unselectedItemColor: Colors.grey,
       showSelectedLabels: true,
       showUnselectedLabels: true,
@@ -30,14 +31,14 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: widget.currentIndex == 0
-                  ? Colors.purple.withOpacity(0.2)
+                  ? couleurprincipale.withOpacity(0.2)
                   : Colors.transparent,
               shape: BoxShape.circle,
             ),
             padding: EdgeInsets.all(8),
             child: Icon(
               Icons.home,
-              color: widget.currentIndex == 0 ? Colors.purple : Colors.grey,
+              color: widget.currentIndex == 0 ? couleurprincipale : Colors.grey,
               size: screenWidth * 0.07,
             ),
           ),
@@ -49,7 +50,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: widget.currentIndex == 1
-                  ? Colors.purple.withOpacity(0.2)
+                  ? couleurprincipale.withOpacity(0.2)
                   : Colors.transparent,
               shape: BoxShape.circle,
             ),
@@ -57,7 +58,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             child: Icon(
               Icons.assignment,
               color: widget.currentIndex == 1
-                  ? const Color.fromARGB(255, 156, 39, 176)
+                  ? couleurprincipale
                   : Colors.grey,
               size: screenWidth * 0.07,
             ),
@@ -70,14 +71,14 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: widget.currentIndex == 2
-                  ? Colors.purple.withOpacity(0.2)
+                  ? couleurprincipale.withOpacity(0.2)
                   : Colors.transparent,
               shape: BoxShape.circle,
             ),
             padding: EdgeInsets.all(8),
             child: Icon(
               Icons.support_agent,
-              color: widget.currentIndex == 2 ? Colors.purple : Colors.grey,
+              color: widget.currentIndex == 2 ? couleurprincipale : Colors.grey,
               size: screenWidth * 0.07,
             ),
           ),
@@ -89,14 +90,14 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: widget.currentIndex == 3
-                  ? Colors.purple.withOpacity(0.2)
+                  ? couleurprincipale.withOpacity(0.2)
                   : Colors.transparent,
               shape: BoxShape.circle,
             ),
             padding: EdgeInsets.all(8),
             child: Icon(
               Icons.person,
-              color: widget.currentIndex == 3 ? Colors.purple : Colors.grey,
+              color: widget.currentIndex == 3 ? couleurprincipale : Colors.grey,
               size: screenWidth * 0.07,
             ),
           ),

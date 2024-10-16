@@ -542,6 +542,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/demande_ser.dart';
 import 'package:terrain/model/demande.dart';
 import 'package:terrain/services/parcelle_service.dart';
@@ -569,7 +570,7 @@ class _PersonnelDemandesPageState extends State<PersonnelDemandesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: couleurprincipale,
         title: Text('Demandes assignées'),
         centerTitle: true,
       ),
@@ -585,10 +586,12 @@ class _PersonnelDemandesPageState extends State<PersonnelDemandesPage> {
             return Center(child: Text('Aucune demande assignée.'));
           }
 
-          return ListView.builder(
+return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final demande = snapshot.data![index];
+              bool isResolved = demande.statut == 'Résolu' ||
+                  demande.statut == 'Répondu'; // Mise à jour du statut
 
               return Padding(
                 padding:
@@ -606,55 +609,102 @@ class _PersonnelDemandesPageState extends State<PersonnelDemandesPage> {
                       ),
                     ],
                   ),
-                  child: ListTile(
-                    leading: Icon(Icons.insert_drive_file_rounded,
-                        color: Colors.purple),
-                    title: Text(
-                      'Nº Parcelle: ${demande.numParcelle ?? 'Inconnu'}',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 8),
-                        Row(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.insert_drive_file_rounded,
+                            color: couleurprincipale),
+                        title: Text(
+                          'Nº Parcelle: ${demande.numParcelle ?? 'Inconnu'}',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.calendar_today,
-                                size: 16, color: Colors.purple),
-                            SizedBox(width: 4),
-                            Text(
-                              demande.dateSoumission != null
-                                  ? '${demande.dateSoumission!.toLocal()}'
-                                  : 'Date inconnue',
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_today,
+                                    size: 16, color: couleurprincipale),
+                                SizedBox(width: 4),
+                                Text(
+                                  demande.dateSoumission != null
+                                      ? '${demande.dateSoumission!.toLocal()}'
+                                      : 'Date inconnue',
+                                ),
+                              ],
                             ),
+                            SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Icon(Icons.person,
+                                    size: 16, color: couleurprincipale),
+                                SizedBox(width: 4),
+                            Text(
+                                'Nom Propriétaire: ${demande.nomProprietaire ?? 'Inconnu'}')],),
+                                 Row(
+                              children: [
+                                Icon(Icons.mail,
+                                    size: 16, color: couleurprincipale),
+                                SizedBox(width: 4),
+                            Text(
+                                'Adresse Propriétaire: ${demande.adresseProprietaire ?? 'Inconnue'}')],),
+                                 
+                                 Row(
+                                children: [
+                                  Icon(Icons.map_sharp,
+                                      size: 16, color: couleurprincipale),
+                                  SizedBox(width: 4),
+                            Text(
+                                'Lieu de la parcelle: ${demande.lieuParcelle ?? 'Inconnu'}')],),
                           ],
                         ),
-                        SizedBox(height: 4),
-                        Text('Statut: ${demande.statut}'),
-                        Text(
-                            'Nom Propriétaire: ${demande.nomProprietaire ?? 'Inconnu'}'),
-                        Text(
-                            'Adresse Propriétaire: ${demande.adresseProprietaire ?? 'Inconnue'}'),
-                        Text(
-                            'Superficie: ${demande.superficieTerrain ?? 'Inconnue'}'),
-                        Text(
-                            'Lieu de la parcelle: ${demande.lieuParcelle ?? 'Inconnu'}'),
-                      ],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.info_outline, color: Colors.purple),
-                      onPressed: () {
-                        showDetails(context, demande);
-                      },
-                    ),
-                  ),
-                ),
-              );
+                        trailing: IconButton(
+                          icon: Icon(Icons.info_outline,
+                              color: couleurprincipale),
+                          onPressed: () {
+                            showDetails(context,
+                                demande); // Affiche uniquement les détails
+                          },
+                        ),
+                      ),
+                      Padding(
+  padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+  child: Container(
+    width: double.infinity, // Le bouton occupe toute la largeur du card
+    child: ElevatedButton(
+      onPressed: isResolved
+          ? null // Désactiver le bouton si la demande est résolue
+          : () {
+              // Action lorsque le bouton "Traiter" est cliqué
+              verifierEtAfficherResultats(context, demande);
+            },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isResolved
+            ? Colors.grey[300] // Grisé si résolu
+            : couleurprincipale, // Couleur active si non résolu
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      child: Text(
+        isResolved ? 'Résolu' : 'Traiter',
+        style: TextStyle(
+          color: isResolved ? Colors.grey : Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ),
+  ),
+)])));
+
             },
           );
+
         },
       ),
-bottomNavigationBar: CustomBottomNavBarp(
+      bottomNavigationBar: CustomBottomNavBarp(
         currentIndex: _currentIndex,
         onTabTapped: onTabTapped,
       ),
@@ -776,13 +826,13 @@ bottomNavigationBar: CustomBottomNavBarp(
                   SizedBox(height: 16),
 
                   // Boutons pour les actions sur la parcelle
-                  ElevatedButton(
-                    onPressed: () async {
-                      await verifierEtAfficherResultats(
-                          context, demande); // Vérification et affichage
-                    },
-                    child: Text('Vérifier les informations'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () async {
+                  //     await verifierEtAfficherResultats(
+                  //         context, demande); // Vérification et affichage
+                  //   },
+                  //   child: Text('Vérifier les informations'),
+                  // ),
                 ],
               ),
             ),

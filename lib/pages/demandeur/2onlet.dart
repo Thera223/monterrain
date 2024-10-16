@@ -48,9 +48,9 @@
 //               // Onglets Connexion/Inscription
 //               TabBar(
 //                 controller: _tabController,
-//                 labelColor: Colors.purple,
+//                 labelColor:couleurprincipale,
 //                 unselectedLabelColor: Colors.grey,
-//                 indicatorColor: Colors.purple,
+//                 indicatorColor:couleurprincipale,
 //                 tabs: [
 //                   Tab(text: 'Connexion'),
 //                   Tab(text: 'Inscription'),

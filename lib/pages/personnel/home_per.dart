@@ -152,11 +152,11 @@
 //                 controller: searchController,
 //                 decoration: InputDecoration(
 //                   prefixIcon: Icon(Icons.search,
-//                       color: Colors.purple, size: screenWidth * 0.07),
+//                       color:couleurprincipale, size: screenWidth * 0.07),
 //                   hintText:
 //                       'Entrer le numéro de parcelle pour voir l\'emplacement',
 //                   filled: true,
-//                   fillColor: Colors.purple[50],
+//                   fillColor:couleurprincipale[50],
 //                   border: OutlineInputBorder(
 //                     borderRadius: BorderRadius.circular(30),
 //                     borderSide: BorderSide.none,
@@ -236,26 +236,26 @@
 //       bottomNavigationBar: BottomNavigationBar(
 //         currentIndex: _currentIndex,
 //         onTap: onTabTapped,
-//         selectedItemColor: Colors.purple,
+//         selectedItemColor:couleurprincipale,
 //         unselectedItemColor: Colors.grey,
 //         showSelectedLabels: true,
 //         showUnselectedLabels: true,
 //         items: [
 //           BottomNavigationBarItem(
 //             icon: Icon(Icons.home,
-//                 color: _currentIndex == 0 ? Colors.purple : Colors.grey,
+//                 color: _currentIndex == 0 ?couleurprincipale : Colors.grey,
 //                 size: screenWidth * 0.07),
 //             label: 'Home',
 //           ),
 //           BottomNavigationBarItem(
 //             icon: Icon(Icons.assignment,
-//                 color: _currentIndex == 1 ? Colors.purple : Colors.grey,
+//                 color: _currentIndex == 1 ?couleurprincipale : Colors.grey,
 //                 size: screenWidth * 0.07),
 //             label: 'Demandes',
 //           ),
 //           BottomNavigationBarItem(
 //             icon: Icon(Icons.person,
-//                 color: _currentIndex == 2 ? Colors.purple : Colors.grey,
+//                 color: _currentIndex == 2 ?couleurprincipale : Colors.grey,
 //                 size: screenWidth * 0.07),
 //             label: 'Profil',
 //           ),
@@ -269,6 +269,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:terrain/model/parcelle_model.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/parcelle_service.dart';
 import 'package:terrain/widgets/bar_nav_pers.dart';
 import 'package:terrain/widgets/contenudahchef.dart';
@@ -450,7 +451,7 @@ class _HomePersonnelPageState extends State<HomePersonnelPage> {
                     decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.search,
-                        color: Colors.deepPurple,
+                        color: couleurprincipale,
                         size: screenWidth * 0.07,
                       ),
                       hintText:

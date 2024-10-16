@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:terrain/model/parcelle_model.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/parcelle_service.dart';
 
 class ParcellesPage extends StatelessWidget {
@@ -301,7 +302,7 @@ class ParcelleCard extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple, // Couleur du bouton
+                      backgroundColor: couleurprincipale, // Couleur du bouton
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

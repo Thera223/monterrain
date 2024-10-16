@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/widgets/bar_nav_pers.dart';
 import 'package:terrain/widgets/contenudahchef.dart';
 
@@ -19,7 +20,7 @@ class _PersonnelProfilePageState extends State<PersonnelProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: couleurprincipale,
         title: Text('Mon Profil'),
         centerTitle: true,
       ),
@@ -27,7 +28,7 @@ class _PersonnelProfilePageState extends State<PersonnelProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.person, size: 100, color: Colors.purple),
+            Icon(Icons.person, size: 100, color: couleurprincipale),
             SizedBox(height: 20),
             Text(
               'Nom: ${user?.displayName ?? 'Nom inconnu'}',
@@ -49,7 +50,7 @@ class _PersonnelProfilePageState extends State<PersonnelProfilePage> {
           ],
         ),
       ),
-bottomNavigationBar: CustomBottomNavBarp(
+      bottomNavigationBar: CustomBottomNavBarp(
         currentIndex: _currentIndex,
         onTabTapped: onTabTapped,
       ),

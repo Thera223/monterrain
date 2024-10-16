@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 
 class SoumissionDemandePage extends StatefulWidget {
   @override
@@ -54,7 +55,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
         .fold(0.0, (sum, item) => sum + item['cost']);
   }
 
-Future<void> _submitDemande() async {
+  Future<void> _submitDemande() async {
     if (_nomProprietaireController.text.isEmpty ||
         _lieuNaissanceController.text.isEmpty ||
         _adresseProprietaireController.text.isEmpty ||
@@ -141,13 +142,9 @@ Future<void> _submitDemande() async {
     });
   }
 
-
-
-
-
 // Étape 1 : Informations sur le propriétaire et la parcelle
- // Étape 1 : Informations sur le propriétaire et la parcelle
- Widget _buildStep1() {
+  // Étape 1 : Informations sur le propriétaire et la parcelle
+  Widget _buildStep1() {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
 
@@ -163,7 +160,7 @@ Future<void> _submitDemande() async {
         Row(
           children: [
             Icon(Icons.person,
-                size: 24, color: Colors.purple), // Icône du formulaire
+                size: 24, color: couleurprincipale), // Icône du formulaire
             SizedBox(width: 8), // Espacement
             Expanded(
               // Utilisation de Expanded pour ajuster le texte
@@ -174,7 +171,7 @@ Future<void> _submitDemande() async {
                       ? 18
                       : 16, // Adaptation de la taille du texte
                   fontWeight: FontWeight.bold,
-                  color: Colors.purple,
+                  color: couleurprincipale,
                 ),
                 overflow:
                     TextOverflow.ellipsis, // Empêcher le débordement de texte
@@ -262,7 +259,7 @@ Future<void> _submitDemande() async {
         Row(
           children: [
             Icon(Icons.location_city,
-                size: 24, color: Colors.purple), // Icône pour localité
+                size: 24, color: couleurprincipale), // Icône pour localité
             SizedBox(width: 8),
             Expanded(
               child: DropdownButtonFormField<String>(
@@ -291,12 +288,7 @@ Future<void> _submitDemande() async {
     );
   }
 
-
-
-
-
 // Fonction utilitaire pour construire des champs de texte avec icônes
-  
 
 // Étape 2 : Sélection du type de demande (avec sélection multiple)
   Widget _buildStep2() {
@@ -306,14 +298,14 @@ Future<void> _submitDemande() async {
         Row(
           children: [
             Icon(Icons.assignment,
-                size: 24, color: Colors.purple), // Icône à côté du titre
+                size: 24, color: couleurprincipale), // Icône à côté du titre
             SizedBox(width: 8), // Espacement
             Text(
               'Sélectionnez les types de demande :',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.purple,
+                color: couleurprincipale,
               ),
             ),
           ],
@@ -326,7 +318,7 @@ Future<void> _submitDemande() async {
             padding: const EdgeInsets.symmetric(
                 vertical: 8.0), // Espacement entre les options
             child: CheckboxListTile(
-              activeColor: Colors.purple, // Couleur pour la case cochée
+              activeColor: couleurprincipale, // Couleur pour la case cochée
               title: Row(
                 children: [
                   // Icône différente selon le type de demande
@@ -365,7 +357,6 @@ Future<void> _submitDemande() async {
     );
   }
 
-
 // Étape 3 : Paiement
   Widget _buildStep3() {
     return Column(
@@ -395,7 +386,7 @@ Future<void> _submitDemande() async {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.purple,
+            color: couleurprincipale,
           ),
         ),
         SizedBox(height: 16),
@@ -420,7 +411,7 @@ Future<void> _submitDemande() async {
               _selectedPaymentMethod = value;
             });
           },
-          activeColor: Colors.purple, // Couleur d'accent pour la sélection
+          activeColor: couleurprincipale, // Couleur d'accent pour la sélection
         ),
         SizedBox(height: 10),
 
@@ -444,12 +435,11 @@ Future<void> _submitDemande() async {
               _selectedPaymentMethod = value;
             });
           },
-          activeColor: Colors.purple, // Couleur d'accent pour la sélection
+          activeColor: couleurprincipale, // Couleur d'accent pour la sélection
         ),
       ],
     );
   }
-
 
   // Étape 4 : Confirmation et envoi des données
   Widget _buildStep4() {
@@ -495,7 +485,7 @@ Future<void> _submitDemande() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: couleurprincipale,
         title: Text('Soumission de demande'),
       ),
       body: SingleChildScrollView(
@@ -512,6 +502,13 @@ Future<void> _submitDemande() async {
                 children: [
                   if (_currentStep > 0)
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: couleurprincipale,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       onPressed: () {
                         setState(() {
                           _currentStep--;
@@ -521,6 +518,13 @@ Future<void> _submitDemande() async {
                     ),
                   if (_currentStep < 3)
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: couleurprincipale,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       onPressed: () {
                         setState(() {
                           _currentStep++;
@@ -545,7 +549,7 @@ Future<void> _submitDemande() async {
       child: LinearProgressIndicator(
         value: progress,
         backgroundColor: Colors.grey[300],
-        color: Colors.purple,
+        color: couleurprincipale,
         minHeight: 8.0,
       ),
     );
@@ -560,12 +564,12 @@ Future<void> _submitDemande() async {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          prefixIcon:
-              Icon(icon, color: Colors.purple), // Ajout d'icône personnalisée
+          prefixIcon: Icon(icon,
+              color: couleurprincipale), // Ajout d'icône personnalisée
           labelText: label,
           labelStyle: TextStyle(fontSize: fontSize),
           filled: true,
-          fillColor: Colors.purple[50], // Couleur de fond légère
+          fillColor: couleurprincipale.withOpacity(0.1), // Couleur de fond légère
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10), // Coins arrondis
           ),
@@ -573,5 +577,4 @@ Future<void> _submitDemande() async {
       ),
     );
   }
-
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/serviceAuthentification/auth_service_web.dart';
 
 class LoginPageWeb extends StatelessWidget {
@@ -117,8 +118,7 @@ class LoginPageWeb extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 15), backgroundColor: Colors
-                                .deepPurple,
+                            padding: EdgeInsets.symmetric(vertical: 15), backgroundColor: couleurprincipale,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ), // Purple color for the button

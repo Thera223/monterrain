@@ -170,11 +170,11 @@
 //                 controller: searchController,
 //                 decoration: InputDecoration(
 //                   prefixIcon: Icon(Icons.search,
-//                       color: Colors.deepPurple, size: screenWidth * 0.07),
+//                       color:couleurprincipale, size: screenWidth * 0.07),
 //                   hintText:
 //                       'Entrer le numéro de parcelle pour voir l\'emplacement',
 //                   filled: true,
-//                   fillColor: Colors.purple[50],
+//                   fillColor:couleurprincipale[50],
 //                   border: OutlineInputBorder(
 //                     borderRadius: BorderRadius.circular(30),
 //                     borderSide: BorderSide.none,
@@ -310,7 +310,7 @@
 //       bottomNavigationBar: BottomNavigationBar(
 //         currentIndex: _currentIndex,
 //         onTap: onTabTapped,
-//         selectedItemColor: Colors.purple,
+//         selectedItemColor:couleurprincipale,
 //         unselectedItemColor: Colors.grey,
 //         showSelectedLabels: true,
 //         showUnselectedLabels: true,
@@ -318,7 +318,7 @@
 //           BottomNavigationBarItem(
 //             icon: Icon(
 //               Icons.home,
-//               color: _currentIndex == 0 ? Colors.purple : Colors.grey,
+//               color: _currentIndex == 0 ?couleurprincipale : Colors.grey,
 //               size: screenWidth * 0.07,
 //             ),
 //             label: 'Home',
@@ -334,7 +334,7 @@
 //           BottomNavigationBarItem(
 //             icon: Icon(
 //               Icons.support_agent,
-//               color: _currentIndex == 2 ? Colors.purple : Colors.grey,
+//               color: _currentIndex == 2 ?couleurprincipale : Colors.grey,
 //               size: screenWidth * 0.07,
 //             ),
 //             label: 'Conseils',
@@ -342,7 +342,7 @@
 //           BottomNavigationBarItem(
 //             icon: Icon(
 //               Icons.person,
-//               color: _currentIndex == 3 ? Colors.purple : Colors.grey,
+//               color: _currentIndex == 3 ?couleurprincipale : Colors.grey,
 //               size: screenWidth * 0.07,
 //             ),
 //             label: 'Profil',
@@ -357,9 +357,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:terrain/model/parcelle_model.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/parcelle_service.dart';
 import 'package:terrain/widgets/contenudahchef.dart';
-
 
 class DashboardDemandeurPage extends StatefulWidget {
   @override
@@ -410,9 +410,10 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
     });
   }
 
-  void searchParcelle() async {
+void searchParcelle() async {
     final query = searchController.text;
 
+    // Check if query is empty and reset map view
     if (query.isEmpty) {
       setState(() {
         searchedLocation = null;
@@ -452,7 +453,12 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
         coutMoyenParcelle = foundParcelle.coutMoyenParcelle;
         lieuParcelle = foundParcelle.lieuParcelle;
         superficieParcelle = foundParcelle.superficieTerrain;
-        _mapController.move(searchedLocation!, 15.0);
+
+        // Animate the map movement
+        _mapController.move(searchedLocation!, 13.0);
+        Future.delayed(Duration(milliseconds: 500), () {
+          _mapController.move(searchedLocation!, 15.0); // Slight zoom effect
+        });
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -460,6 +466,7 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -469,8 +476,9 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 156, 39, 176),
+        // backgroundColor: couleurprincipale.withOpacity(0.2),
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Image.asset(
@@ -486,12 +494,12 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
                   Text(
                     'COUCOU !',
                     style: TextStyle(
-                        color: Colors.white, fontSize: screenWidth * 0.03),
+                        color: Colors.black, fontSize: screenWidth * 0.03),
                   ),
                   Text(
                     'Abdalla Guindo',
                     style: TextStyle(
-                        color: Colors.white, fontSize: screenWidth * 0.05),
+                        color: Colors.black, fontSize: screenWidth * 0.05),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -502,14 +510,14 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications,
-                color: Colors.white, size: screenWidth * 0.07),
+                color: couleurprincipale.withOpacity(1.0), size: screenWidth * 0.07),
             onPressed: () {
               // Action pour les notifications
             },
           ),
           IconButton(
             icon: Icon(Icons.account_circle,
-                color: Colors.white, size: screenWidth * 0.07),
+                color: couleurprincipale.withOpacity(1.0), size: screenWidth * 0.07),
             onPressed: () {
               // Action pour accéder au profil
             },
@@ -525,14 +533,14 @@ class _DashboardDemandeurPageState extends State<DashboardDemandeurPage> {
                 controller: searchController,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search,
-                      color: Colors.deepPurple, size: screenWidth * 0.07),
+                      color: couleurprincipale, size: screenWidth * 0.07),
                   hintText:
                       'Entrer le numéro de parcelle pour voir l\'emplacement',
                   filled: true,
-                  fillColor: Colors.purple[50],
+                  fillColor: Colors.transparent, 
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
+                    borderSide: BorderSide(color: couleurprincipale),
                   ),
                 ),
                 onSubmitted: (_) => searchParcelle(),

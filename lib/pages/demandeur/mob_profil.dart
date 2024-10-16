@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/widgets/contenudahchef.dart';
 // Chemin vers la barre de navigation personnalisée
 
@@ -36,7 +37,7 @@ class ProfilePage extends StatelessWidget {
                 curve: Curves.easeInOut,
                 child: CircleAvatar(
                   radius: MediaQuery.of(context).size.width > 600 ? 60 : 40,
-                  backgroundColor: Colors.purple,
+                  backgroundColor: couleurprincipale,
                   child: Icon(Icons.person,
                       size: MediaQuery.of(context).size.width > 600 ? 60 : 40,
                       color: Colors.white),
@@ -52,7 +53,7 @@ class ProfilePage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.2,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: Colors.purple,
+                  color: couleurprincipale,
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -88,11 +89,11 @@ class ProfilePage extends StatelessWidget {
                 onPressed: () {
                   // Logique pour se déconnecter
                 },
-                icon: Icon(Icons.logout, color: Colors.purple),
+                icon: Icon(Icons.logout, color: couleurprincipale),
                 label: Text('Se déconnecter'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple.withOpacity(0.1),
-                  foregroundColor: Colors.purple,
+                  backgroundColor: couleurprincipale.withOpacity(0.1),
+                  foregroundColor: couleurprincipale,
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.1,
                       vertical: 14),
@@ -158,7 +159,8 @@ class ProfilePage extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(Icons.lock_outline),
-        suffixIcon: Icon(Icons.remove_red_eye_outlined, color: Colors.purple),
+        suffixIcon:
+            Icon(Icons.remove_red_eye_outlined, color: couleurprincipale),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),

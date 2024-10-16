@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/serviceAuthentification/auth_service_mobile.dart';
 import 'package:terrain/services/user_service.dart';
 
@@ -63,9 +64,9 @@ class _LoginPageMobileState extends State<LoginPageMobile>
               // Onglets Connexion/Inscription
               TabBar(
                 controller: _tabController,
-                labelColor: Colors.purple,
+                labelColor: couleurprincipale,
                 unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.purple,
+                indicatorColor: couleurprincipale,
                 tabs: [
                   Tab(text: 'Connexion'),
                   Tab(text: 'Inscription'),
@@ -126,7 +127,7 @@ class _LoginPageMobileState extends State<LoginPageMobile>
           SizedBox(height: 20),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: couleurprincipale,
               padding: EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -245,7 +246,7 @@ Widget _buildRegisterForm(
             SizedBox(height: fieldPadding * 2),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: couleurprincipale,
                 padding: EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
