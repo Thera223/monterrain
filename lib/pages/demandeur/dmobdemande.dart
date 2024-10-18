@@ -301,6 +301,7 @@ class _DemandePageState extends State<DemandePage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: couleurprincipale,
         title: Text('Mes Demandes'),
         centerTitle: true,

@@ -10,31 +10,25 @@ class LogService extends ChangeNotifier {
   Future<void> logAction({
     required String action,
     required String details,
+    required String userId,
+    required String role,
+   // Utilisateur cible
   }) async {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
-      // Récupérer le rôle depuis Firestore
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .get();
-
-      if (userDoc.exists) {
-        String role = userDoc['role'];
-
-        await _logsCollection.add({
-          'userId': currentUser.uid,
-          'role': role, // Enregistrer le rôle ici
-          'action': action,
-          'details': details,
-          'timestamp': FieldValue.serverTimestamp(),
-        });
-      }
+    try {
+      await _logsCollection.add({
+        'action': action,
+        'details': details,
+        'userId': userId, // Celui qui effectue l'action
+         // Celui qui est affecté par l'action
+        'role': role, // Rôle passé en paramètre
+        'timestamp': FieldValue.serverTimestamp(), // Timestamp actuel
+      });
+    } catch (e) {
+      print("Erreur lors de l'enregistrement des logs : $e");
     }
   }
 
- 
-   // Stream pour récupérer les logs avec pagination
+  // Stream pour récupérer les logs avec pagination
   Stream<QuerySnapshot> getLogsStream({DocumentSnapshot? lastLog}) {
     Query query =
         _logsCollection.orderBy('timestamp', descending: true).limit(20);
@@ -43,5 +37,4 @@ class LogService extends ChangeNotifier {
     }
     return query.snapshots();
   }
-  
 }

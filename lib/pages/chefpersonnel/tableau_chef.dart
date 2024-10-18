@@ -65,6 +65,7 @@ class _ChefDashboardPageState extends State<ChefDashboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        
         title: Text('Tableau de bord du Chef de Personnel'),
       ),
       drawer: _buildDrawer(), // Ajout du Drawer pour la navigation

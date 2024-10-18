@@ -10,6 +10,7 @@ class ParcellesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Gestion des Parcelles'),
       ),
       body: Center(
@@ -175,6 +176,7 @@ class ParcelleListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Liste des Parcelles'),
         backgroundColor: Colors.white,
         elevation: 0,

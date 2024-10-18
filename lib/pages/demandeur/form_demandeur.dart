@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'package:terrain/pages/config_charte_coul.dart';
+import 'package:terrain/services/hist_service.dart';
 
 class SoumissionDemandePage extends StatefulWidget {
   @override
@@ -55,7 +57,8 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
         .fold(0.0, (sum, item) => sum + item['cost']);
   }
 
-  Future<void> _submitDemande() async {
+ Future<void> _submitDemande(LogService logService) async {
+    
     if (_nomProprietaireController.text.isEmpty ||
         _lieuNaissanceController.text.isEmpty ||
         _adresseProprietaireController.text.isEmpty ||
@@ -108,11 +111,23 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
         'statut': 'En attente',
       };
 
+      // Ajouter la demande à Firestore
       await FirebaseFirestore.instance.collection('demandes').add(demandeData);
 
+      // Afficher un message de succès
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Demande soumise avec succès !')),
       );
+
+      // Enregistrer l'action dans le log
+      await logService.logAction(
+        action: 'Demandes',
+        details:
+            'Demande soumise par ${user.email}, ',
+        userId: user.uid,
+        role: 'demandeur', // Rôle de l'utilisateur
+      );
+
       // Réinitialiser les champs après la soumission
       _resetForm();
     } catch (e) {
@@ -122,6 +137,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
       );
     }
   }
+
 
   void _resetForm() {
     _nomProprietaireController.clear();
@@ -456,7 +472,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
         SizedBox(height: 24),
         ElevatedButton(
           onPressed: () {
-            Navigator.popUntil(context, ModalRoute.withName('/'));
+            Navigator.popUntil(context, ModalRoute.withName('/dashboard'));
           },
           child: Text('Retour à l\'accueil'),
         ),
@@ -466,6 +482,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
 
   // Rendu de l'interface en fonction de l'étape actuelle
   Widget _buildCurrentStep() {
+    final logService = Provider.of<LogService>(context, listen: false);
     switch (_currentStep) {
       case 0:
         return _buildStep1();
@@ -474,7 +491,8 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
       case 2:
         return _buildStep3();
       case 3:
-        _submitDemande(); // Envoi des données à Firebase lors de la confirmation
+        _submitDemande(
+            logService); // Envoi des données à Firebase lors de la confirmation
         return _buildStep4();
       default:
         return _buildStep1();
@@ -483,6 +501,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: couleurprincipale,
@@ -500,6 +519,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Bouton "Retour" (affiché sauf à la première étape)
                   if (_currentStep > 0)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -511,11 +531,13 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _currentStep--;
+                          _currentStep--; // Revenir à l'étape précédente
                         });
                       },
                       child: Text('Retour'),
                     ),
+
+                  // Bouton "Suivant" (affiché sauf à la dernière étape)
                   if (_currentStep < 3)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -527,13 +549,33 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
                       ),
                       onPressed: () {
                         setState(() {
-                          _currentStep++;
+                          _currentStep++; // Aller à l'étape suivante
                         });
                       },
                       child: Text('Suivant'),
                     ),
+
+                  // Bouton "Soumettre" (affiché uniquement à la dernière étape)
+                  if (_currentStep == 3)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: couleurprincipale,
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        final logService =
+                            Provider.of<LogService>(context, listen: false);
+                        _submitDemande(
+                            logService); // Soumettre la demande à la dernière étape
+                      },
+                      child: Text('Soumettre'),
+                    ),
                 ],
-              ),
+              )
+
             ],
           ),
         ),

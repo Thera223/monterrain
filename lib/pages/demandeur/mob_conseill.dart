@@ -38,6 +38,7 @@ class _ConseilsPageState extends State<ConseilsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'CONSEILS',
           style: TextStyle(
@@ -69,137 +70,126 @@ class _ConseilsPageState extends State<ConseilsPage> {
           }
 
           // Utiliser LayoutBuilder pour adapter la mise en page selon la taille de l'écran
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              int crossAxisCount;
-              double childAspectRatio;
-
-              if (constraints.maxWidth >= 1200) {
-                crossAxisCount = 4;
-                childAspectRatio = 0.8;
-              } else if (constraints.maxWidth >= 800) {
-                crossAxisCount = 3;
-                childAspectRatio = 0.8;
-              } else if (constraints.maxWidth >= 600) {
-                crossAxisCount = 2;
-                childAspectRatio = 0.7;
-              } else {
-                crossAxisCount = 1;
-                childAspectRatio = 0.9;
-              }
+return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final conseil = snapshot.data![index];
 
               return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: crossAxisCount,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: childAspectRatio,
-                  ),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    final conseil = snapshot.data![index];
-                    return Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 4,
+                        spreadRadius: 2,
+                        offset: Offset(0, 2),
                       ),
-                      shadowColor: Colors.grey.withOpacity(0.3),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading:
+                            Icon(Icons.business, color: Colors.blue, size: 30),
+                        title: Text(
+                          conseil['nom'] ?? 'Nom inconnu',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            SizedBox(height: 4),
+                            // Adresse du Conseil
                             Row(
                               children: [
-                                Icon(Icons.business,
-                                    color: couleurprincipale, size: 22),
-                                SizedBox(width: 6),
+                                Icon(Icons.location_on,
+                                    size: 14, color: Colors.grey),
+                                SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
-                                    conseil['nom'] ?? 'Nom inconnu',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
+                                    'Adresse: ${conseil['adresse'] ?? 'Non spécifiée'}',
+                                    style: TextStyle(color: Colors.grey),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Contact du Conseil
+                            Row(
+                              children: [
+                                Icon(Icons.phone, size: 14, color: Colors.grey),
+                                SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    'Contact: ${conseil['contact'] ?? 'Non spécifié'}',
+                                    style: TextStyle(color: Colors.grey),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
                             SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(Icons.location_on,
-                                    color: Colors.grey, size: 20),
-                                SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    'Adresse: ${conseil['adresse'] ?? 'Non spécifiée'}',
-                                    style: TextStyle(fontSize: 13),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                            // Bouton pour voir plus d'infos
+                            ElevatedButton(
+                              onPressed: () {
+                                showConseilDetails(
+                                    context, conseil); // Afficher les détails
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(0xFFECEAFF),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
-                              ],
+                              ),
+                              child: Text(
+                                'Voir plus',
+                                style: TextStyle(color: Colors.blue),
+                              ),
                             ),
-                            SizedBox(height: 6),
+                          ],
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Popularité sous forme d'étoiles
                             Row(
-                              children: [
-                                Icon(Icons.phone, color: Colors.grey, size: 20),
-                                SizedBox(width: 6),
-                                Expanded(
-                                  child: Text(
-                                    'Contact: ${conseil['contact'] ?? 'Non spécifié'}',
-                                    style: TextStyle(fontSize: 13),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Icon(Icons.star, color: Colors.amber, size: 20),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Popularité:',
-                                  style: TextStyle(fontSize: 13),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 6),
-                            Row(
-                              children: List.generate(5, (index) {
+                              mainAxisSize: MainAxisSize
+                                  .min, // Ajuste la taille en fonction des étoiles
+                              children: List.generate(5, (starIndex) {
                                 return Icon(
-                                  index < (conseil['popularity'] ?? 0)
+                                  starIndex < (conseil['popularity'] ?? 0)
                                       ? Icons.star
                                       : Icons.star_border,
                                   color: Colors.amber,
-                                  size: 18,
+                                  size: 18, // Taille des étoiles
                                 );
                               }),
                             ),
-                            Spacer(),
                             SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  showConseilDetails(context, conseil);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: 10),
-                                  backgroundColor: couleurprincipale,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
+                                height:
+                                    8), // Espacement entre les étoiles et le bouton de popularité
+                            // Afficher la popularité avec un texte en dessous
+                            Container(
+                              width: 80,
+                              padding: EdgeInsets.symmetric(vertical: 4),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.blue, width: 1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Center(
                                 child: Text(
-                                  'Voir plus',
+                                  '${conseil['popularity'] ?? 0} / 5',
                                   style: TextStyle(
-                                    color: Colors.white,
                                     fontSize: 14,
+                                    color: Colors.blue,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -208,12 +198,18 @@ class _ConseilsPageState extends State<ConseilsPage> {
                           ],
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
               );
             },
           );
+
+
+
+
+
+
         },
       ),
       bottomNavigationBar: CustomBottomNavBar(

@@ -545,6 +545,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:terrain/pages/config_charte_coul.dart';
 import 'package:terrain/services/demande_ser.dart';
 import 'package:terrain/model/demande.dart';
+import 'package:terrain/services/hist_service.dart';
 import 'package:terrain/services/parcelle_service.dart';
 import 'package:terrain/services/user_service.dart';
 import 'package:http/http.dart' as http;
@@ -570,7 +571,8 @@ class _PersonnelDemandesPageState extends State<PersonnelDemandesPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: couleurprincipale,
+        automaticallyImplyLeading: false,
+        // backgroundColor: couleurprincipale,
         title: Text('Demandes assignées'),
         centerTitle: true,
       ),
@@ -588,6 +590,7 @@ class _PersonnelDemandesPageState extends State<PersonnelDemandesPage> {
 
 return ListView.builder(
             itemCount: snapshot.data!.length,
+            
             itemBuilder: (context, index) {
               final demande = snapshot.data![index];
               bool isResolved = demande.statut == 'Résolu' ||
@@ -677,7 +680,12 @@ return ListView.builder(
           ? null // Désactiver le bouton si la demande est résolue
           : () {
               // Action lorsque le bouton "Traiter" est cliqué
-              verifierEtAfficherResultats(context, demande);
+               final logService = Provider.of<
+                                              LogService>(context,
+                                          listen:
+                                              false); // Obtenir logService via Provider
+                                      verifierEtAfficherResultats(
+                                          context, demande, logService);
             },
       style: ElevatedButton.styleFrom(
         backgroundColor: isResolved
@@ -851,11 +859,13 @@ return ListView.builder(
   }
 
   // Méthode pour vérifier les informations soumises et afficher les résultats
-  Future<void> verifierEtAfficherResultats(
-      BuildContext context, Demande demande) async {
+Future<void> verifierEtAfficherResultats(
+      BuildContext context, Demande demande, LogService logService) async {
     final parcelleService =
         Provider.of<ParcelleService>(context, listen: false);
     final demandeService = Provider.of<DemandeService>(context, listen: false);
+    final currentUser =
+        FirebaseAuth.instance.currentUser; // Récupérer l'utilisateur actuel
 
     String reponse = ''; // Initialisation de la réponse
     List<String> differences = [];
@@ -868,6 +878,16 @@ return ListView.builder(
         reponse = 'Numéro de parcelle manquant ou invalide.';
         await demandeService.repondreDemande(demande.id, reponse);
         await demandeService.updateStatutDemande(demande.id, 'Répondu');
+
+        // Log détaillé de la réponse
+        await logService.logAction(
+          action: 'Réponse',
+          details:
+              'Le personnel ${currentUser?.email} (ID: ${currentUser?.uid}) '
+              'a répondu à la demande ${demande.id} avec une réponse : $reponse',
+          userId: currentUser?.uid ?? 'Utilisateur inconnu',
+          role: 'Personnel',
+        );
         return;
       }
 
@@ -877,6 +897,16 @@ return ListView.builder(
         reponse = 'Le numéro de parcelle est incorrect ou invalide.';
         await demandeService.repondreDemande(demande.id, reponse);
         await demandeService.updateStatutDemande(demande.id, 'Répondu');
+
+        // Log détaillé de la réponse
+        await logService.logAction(
+          action: 'Réponse',
+          details:
+              'Le personnel ${currentUser?.email} (ID: ${currentUser?.uid}) '
+              'a répondu à la demande ${demande.id} avec une réponse : $reponse',
+          userId: currentUser?.uid ?? 'Utilisateur inconnu',
+          role: 'Personnel',
+        );
         return;
       }
 
@@ -885,10 +915,8 @@ return ListView.builder(
           await parcelleService.getParcelleByNumero(numParcelle);
 
       if (parcelleData != null) {
-        // Si les types de demande sont bien récupérés
         if (demande.typesDemande != null && demande.typesDemande!.isNotEmpty) {
           for (String typeDemande in demande.typesDemande!) {
-            // Gestion du type 'Vérification titre de propriété'
             if (typeDemande == 'Vérification titre de propriété') {
               if (demande.nomProprietaire != parcelleData['nomProprietaire']) {
                 differences.add('Nom incorrect');
@@ -906,131 +934,65 @@ return ListView.builder(
               }
             }
 
-            // Gestion du type 'Historique de transaction foncière'
             if (typeDemande == 'Historique de transaction foncière') {
               historiqueTransactions =
                   parcelleData['historiqueTransactions']?.cast<String>() ?? [];
             }
 
-            // Gestion du type 'Litige foncier'
             if (typeDemande == 'Litige foncier') {
               litigePresent = parcelleData['litige'] ?? false;
             }
           }
 
-          // Affichage des résultats dans une nouvelle fenêtre
-          showDialog(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text('Résultats de la vérification'),
-              content: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Résultats de la vérification du titre de propriété
-                    if (demande.typesDemande!
-                        .contains('Vérification titre de propriété'))
-                      Card(
-                        child: ListTile(
-                          title: Text(
-                            'Vérification titre de propriété',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(differences.isEmpty
-                              ? 'Toutes les informations correspondent.'
-                              : 'Incohérences trouvées : ${differences.join(', ')}'),
-                        ),
-                      ),
+          // Générer et envoyer la réponse finale
+          reponse = genererReponse(
+              differences, historiqueTransactions, litigePresent);
+          await demandeService.repondreDemande(demande.id, reponse);
+          await demandeService.updateStatutDemande(demande.id, 'Répondu');
 
-                    SizedBox(height: 16),
+          // Log détaillé de la réponse
+          await logService.logAction(
+            action: 'Réponse',
+            details:
+                'Le personnel ${currentUser?.email} (ID: ${currentUser?.uid}) '
+                'a répondu à la demande ${demande.id} avec une réponse : $reponse',
+            userId: currentUser?.uid ?? 'Utilisateur inconnu',
+            role: 'Personnel',
+          );
 
-                    // Résultats de l'historique des transactions
-                    if (demande.typesDemande!
-                        .contains('Historique de transaction foncière'))
-                      Card(
-                        child: ExpansionTile(
-                          title: Text(
-                            'Historique des transactions',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          children: historiqueTransactions.isNotEmpty
-                              ? historiqueTransactions.map((transaction) {
-                                  return ListTile(
-                                    title: Text(transaction),
-                                  );
-                                }).toList()
-                              : [
-                                  ListTile(
-                                    title: Text('Aucun historique trouvé.'),
-                                  ),
-                                ],
-                        ),
-                      ),
-
-                    SizedBox(height: 16),
-
-                    // Résultats de la vérification des litiges
-                    if (demande.typesDemande!.contains('Litige foncier'))
-                      Card(
-                        child: ListTile(
-                          title: Text(
-                            'Litige foncier',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(litigePresent
-                              ? 'Un litige est présent sur cette parcelle.'
-                              : 'Aucun litige trouvé sur cette parcelle.'),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    // Envoi de la réponse et mise à jour du statut
-                    reponse = genererReponse(
-                        differences, historiqueTransactions, litigePresent);
-                    await demandeService.repondreDemande(demande.id, reponse);
-                    await demandeService.updateStatutDemande(
-                        demande.id, 'Répondu');
-
-                    // Fermer les boîtes de dialogue
-                    Navigator.of(ctx)
-                        .pop(); // Fermer la boîte de dialogue actuelle
-                    Navigator.of(context)
-                        .pop(); // Fermer la boîte de dialogue précédente
-
-                    // Afficher un message de confirmation
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Réponse envoyée avec succès')),
-                    );
-                  },
-                  child: Text('Envoyer la réponse'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(ctx).pop();
-                  },
-                  child: Text('Fermer'),
-                ),
-              ],
-            ),
+          // Afficher un message de confirmation
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Réponse envoyée avec succès')),
           );
         } else {
-          // Si aucun type de demande n'est trouvé dans la demande
           reponse = 'Aucun type de demande valide trouvé dans la demande.';
           await demandeService.repondreDemande(demande.id, reponse);
           await demandeService.updateStatutDemande(demande.id, 'Répondu');
+
+          // Log détaillé de la réponse
+          await logService.logAction(
+            action: 'Réponse',
+            details:
+                'Le personnel ${currentUser?.email} (ID: ${currentUser?.uid}) '
+                'a répondu à la demande ${demande.id} avec une réponse : $reponse',
+            userId: currentUser?.uid ?? 'Utilisateur inconnu',
+            role: 'Personnel',
+          );
         }
       } else {
-        // Si la parcelle n'est pas trouvée, envoyer une réponse appropriée
         reponse = 'Le numéro de parcelle fourni est incorrect ou introuvable.';
         await demandeService.repondreDemande(demande.id, reponse);
         await demandeService.updateStatutDemande(demande.id, 'Répondu');
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Réponse envoyée : parcelle introuvable')),
+        // Log détaillé de la réponse
+        await logService.logAction(
+          action: 'Réponse',
+          details:
+              'Le personnel ${currentUser?.email} (ID: ${currentUser?.uid}) '
+              'a répondu à la demande ${demande.id} concernant la parcelle '
+              '${demande.numParcelle} avec la réponse : $reponse',
+          userId: currentUser?.uid ?? 'Utilisateur inconnu',
+          role: 'Personnel',
         );
       }
     } catch (e) {
@@ -1039,6 +1001,8 @@ return ListView.builder(
       );
     }
   }
+
+
 
   // Méthode pour générer la réponse à envoyer au demandeur
   String genererReponse(List<String> differences,

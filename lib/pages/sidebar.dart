@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Assurez-vous d'importer FirebaseAuth
 import 'package:flutter/material.dart';
 import 'package:terrain/pages/config_charte_coul.dart';
 
@@ -83,7 +84,14 @@ class CustomNavigationSidebar extends StatelessWidget {
             title: 'Déconnexion',
             icon: Icons.logout,
             index: 6,
-            onItemTapped: onItemTapped,
+            onItemTapped: (index) async {
+              if (index == 6) {
+                // Appelle la méthode de déconnexion de Firebase
+                await FirebaseAuth.instance.signOut();
+                // Redirige vers la page de connexion après déconnexion
+                Navigator.of(context).pushReplacementNamed('/');
+              }
+            },
             selectedIndex: selectedIndex,
             isLogout: true, // Coloration rouge pour déconnexion
           ),

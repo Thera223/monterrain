@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:terrain/services/hist_service.dart';
 
 class UserService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -10,6 +12,7 @@ class UserService extends ChangeNotifier {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;    
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final LogService _logService = LogService();
 
   // Obtenir tous les utilisateurs
   Stream<List<Map<String, dynamic>>> getUsers() {
@@ -17,6 +20,26 @@ class UserService extends ChangeNotifier {
       return querySnapshot.docs.map((doc) => doc.data()).toList();
     });
   }
+
+  Future<List<Map<String, dynamic>>> getUsersData() async {
+    try {
+      // Récupération des documents depuis la collection "users"
+      QuerySnapshot querySnapshot = await _usersCollection.get();
+
+      // Mapping des données pour les renvoyer sous forme de liste de Map
+      return querySnapshot.docs.map((doc) {
+        return {
+          'id': doc.id, // Assurez-vous d'avoir l'ID du document
+          ...doc.data()
+              as Map<String, dynamic> // Les autres données de l'utilisateur
+        };
+      }).toList();
+    } catch (e) {
+      print('Erreur lors de la récupération des utilisateurs: $e');
+      return [];
+    }
+  }
+
 
   // Récupérer les informations de l'utilisateur connecté
   // Récupérer le rôle de l'utilisateur connecté
@@ -143,20 +166,34 @@ notifyListeners();
   Future<void> updateUser(String userId, Map<String, dynamic> userData) async {
     try {
       await _usersCollection.doc(userId).update(userData);
+      notifyListeners();
     } catch (e) {
       throw Exception('Erreur lors de la mise à jour de l\'utilisateur : $e');
     }
   }
 
   // Supprimer un utilisateur
+ // Suppression d'un utilisateur avec logs
   Future<void> deleteUser(String userId) async {
     try {
-      await _usersCollection.doc(userId).delete();
-      notifyListeners();
+      final currentUser = _firebaseAuth.currentUser;
+
+      // Avant suppression, récupérer les informations de l'utilisateur supprimé
+      final Map<String, dynamic>? userToDelete = await getUserById(userId);
+
+      if (userToDelete != null && currentUser != null) {
+        await _usersCollection.doc(userId).delete();
+
+       
+
+        notifyListeners();
+        print("Utilisateur supprimé avec succès.");
+      }
     } catch (e) {
       throw Exception('Erreur lors de la suppression de l\'utilisateur : $e');
     }
   }
+
 
   // Obtenir la localité d'un chef de personnel
   Future<String?> getLocaliteByRole(String userId) async {
@@ -192,17 +229,20 @@ Future<List<Map<String, dynamic>>> getPersonnelsByChef(String chefId) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection('users')
-          .where('role', isEqualTo: 'personnel')
-          .where('chefId', isEqualTo: chefId)
+          .where('role', isEqualTo: 'personnel') // Filtrer par rôle 'personnel'
+          .where('chefId', isEqualTo: chefId) // Filtrer par chefId
           .get();
 
-      // Retourne une liste des données des personnels
+      // Retourne une liste des données des personnels avec tous les champs nécessaires
       return querySnapshot.docs.map((doc) {
         return {
-          'id': doc
-              .id, // Récupère l'ID du document comme identifiant du personnel
+          'id': doc.id, // Récupère l'ID du document
           'nom': doc['nom'] ?? 'Nom inconnu',
+          'prenom': doc['prenom'] ?? 'Prénom non disponible',
           'email': doc['email'] ?? 'Email non disponible',
+          'adresse': doc['adresse'] ?? 'Adresse non disponible',
+          'localite': doc['localite'] ?? 'Localité non disponible',
+          'role': doc['role'] ?? 'Rôle non disponible',
         };
       }).toList();
     } catch (e) {
@@ -210,6 +250,7 @@ Future<List<Map<String, dynamic>>> getPersonnelsByChef(String chefId) async {
       return [];
     }
   }
+
 
 
     // Méthode pour obtenir un utilisateur via son ID

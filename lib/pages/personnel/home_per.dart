@@ -377,10 +377,11 @@ class _HomePersonnelPageState extends State<HomePersonnelPage> {
     var screenHeight = MediaQuery.of(context).size.height;
     bool isLargeScreen = screenWidth > 600;
 
-    return Scaffold(
+        return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 156, 39, 176),
+        // backgroundColor: couleurprincipale.withOpacity(0.2),
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             Image.asset(
@@ -396,16 +397,12 @@ class _HomePersonnelPageState extends State<HomePersonnelPage> {
                   Text(
                     'COUCOU !',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.03,
-                    ),
+                        color: Colors.black, fontSize: screenWidth * 0.03),
                   ),
                   Text(
                     'Abdalla Guindo',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.05,
-                    ),
+                        color: Colors.black, fontSize: screenWidth * 0.05),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -416,14 +413,16 @@ class _HomePersonnelPageState extends State<HomePersonnelPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications,
-                color: Colors.white, size: screenWidth * 0.07),
+                color: couleurprincipale.withOpacity(1.0),
+                size: screenWidth * 0.07),
             onPressed: () {
               // Action pour les notifications
             },
           ),
           IconButton(
             icon: Icon(Icons.account_circle,
-                color: Colors.white, size: screenWidth * 0.07),
+                color: couleurprincipale.withOpacity(1.0),
+                size: screenWidth * 0.07),
             onPressed: () {
               // Action pour accéder au profil
             },
@@ -432,14 +431,7 @@ class _HomePersonnelPageState extends State<HomePersonnelPage> {
       ),
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/terrain.png',
-              fit: BoxFit.cover,
-              color: Colors.black.withOpacity(0.2),
-              colorBlendMode: BlendMode.darken,
-            ),
-          ),
+          
           SingleChildScrollView(
             child: Column(
               children: [
