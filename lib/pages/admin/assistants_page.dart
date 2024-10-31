@@ -21,7 +21,7 @@ class _AssistantsPageState extends State<AssistantsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         automaticallyImplyLeading: false,
         title: Text('Liste des Conseils Juridiques'),
         centerTitle: false,

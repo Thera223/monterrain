@@ -99,5 +99,13 @@ class ParcelleService extends ChangeNotifier {
     }
   }
 
+  //NBREPARCELLE
+
+  Future<int> getParcellesCount() async {
+  QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('parcelles').get();
+  return querySnapshot.size;
+}
+
+
 
 }

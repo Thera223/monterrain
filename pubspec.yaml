@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  fl_chart: ^0.35.0
+
   
 
 

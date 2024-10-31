@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:terrain/model/demande.dart';
 import 'package:terrain/services/parcelle_service.dart';
+import 'package:intl/intl.dart';
+
 
 class DemandeService extends ChangeNotifier {
   final CollectionReference demandeCollection =
@@ -46,6 +48,24 @@ class DemandeService extends ChangeNotifier {
       print("Erreur lors de la récupération des demandes pour $localite : $e");
       return [];
     }
+  }
+  Future<String?> getLocaliteForChef(String chefId) async {
+    try {
+      final chefDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(chefId)
+          .get();
+
+      if (chefDoc.exists && chefDoc.data()?['role'] == 'chef_personnel') {
+        return chefDoc
+            .data()?['localite']; // Retourne la localité associée au chef
+      } else {
+        print("Chef non trouvé ou rôle incorrect.");
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de la localité du chef: $e');
+    }
+    return null;
   }
 
   // Assigner une demande à un personnel
@@ -314,6 +334,34 @@ void traiterDemande(BuildContext context, Demande demande) {
   }
 
 
+  // Méthode pour obtenir le nombre de demandes par localité et statut
+Future<int> getDemandesCount({
+    required String localite,
+    required String statut,
+  }) async {
+    try {
+      print(
+          'Récupération des demandes pour Localité: $localite et Statut: $statut');
+
+      final querySnapshot = await demandeCollection
+          .where('localite', isEqualTo: localite)
+          .where('statut', isEqualTo: statut)
+          .get();
+
+      print('Nombre de demandes trouvées : ${querySnapshot.docs.length}');
+
+      for (var doc in querySnapshot.docs) {
+      }
+
+      return querySnapshot.docs.length;
+    } catch (e) {
+      print('Erreur lors de la récupération du nombre de demandes : $e');
+      return 0;
+    }
+  }
+
+
+
 
 
 
@@ -396,12 +444,115 @@ void traiterDemande(BuildContext context, Demande demande) {
       return 0;
     }
   }
+
+
+    // Méthode pour récupérer les demandes filtrées par date
+  Future<List<Demande>> getDemandesByDate(DateTime startDate, DateTime endDate) async {
+    try {
+      QuerySnapshot querySnapshot = await demandeCollection
+          .where('dateSoumission', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
+          .where('dateSoumission', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
+          .get();
+
+      return querySnapshot.docs.map((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        return Demande.fromMap(doc.id, data);
+      }).toList();
+    } catch (e) {
+      print("Erreur lors de la récupération des demandes par date : $e");
+      return [];
+    }
+  }
+
+
+
+// // Méthode pour récupérer les demandes agrégées par date
+// Future<Map<String, int>> getDemandesGroupedByDate() async {
+//   Map<String, int> demandesByDate = {};
+
+//   try {
+//     QuerySnapshot querySnapshot = await demandeCollection.get();
+//     for (var doc in querySnapshot.docs) {
+//       DateTime date = (doc['dateSoumission'] as Timestamp).toDate();
+//       String dateStr = '${date.year}-${date.month}-${date.day}';
+//       if (demandesByDate.containsKey(dateStr)) {
+//         demandesByDate[dateStr] = demandesByDate[dateStr]! + 1;
+//       } else {
+//         demandesByDate[dateStr] = 1;
+//       }
+//     }
+//   } catch (e) {
+//     print('Erreur lors de l\'agrégation des demandes par date : $e');
+//   }
+
+//   return demandesByDate;
+// }
+
+// // Méthode pour récupérer les réponses (statut 'Répondu') agrégées par date
+// Future<Map<String, int>> getResponsesGroupedByDate() async {
+//   Map<String, int> responsesByDate = {};
+
+//   try {
+//     QuerySnapshot querySnapshot =
+//         await demandeCollection.where('statut', isEqualTo: 'Répondu').get();
+//     for (var doc in querySnapshot.docs) {
+//       DateTime date = (doc['dateSoumission'] as Timestamp).toDate();
+//       String dateStr = '${date.year}-${date.month}-${date.day}';
+//       if (responsesByDate.containsKey(dateStr)) {
+//         responsesByDate[dateStr] = responsesByDate[dateStr]! + 1;
+//       } else {
+//         responsesByDate[dateStr] = 1;
+//       }
+//     }
+//   } catch (e) {
+//     print('Erreur lors de l\'agrégation des réponses par date : $e');
+//   }
+
+//   return responsesByDate;
+// }
+
+
+// Méthode pour récupérer les demandes agrégées par date
+  Future<Map<String, int>> getDemandesGroupedByDate() async {
+    Map<String, int> demandesByDate = {};
+
+    try {
+      QuerySnapshot querySnapshot = await demandeCollection.get();
+      for (var doc in querySnapshot.docs) {
+        DateTime date = (doc['dateSoumission'] as Timestamp).toDate();
+        String dateStr = DateFormat('yyyy-MM-dd').format(date);
+        demandesByDate.update(dateStr, (value) => value + 1, ifAbsent: () => 1);
+      }
+    } catch (e) {
+      print('Erreur lors de l\'agrégation des demandes par date : $e');
+    }
+
+    return demandesByDate;
+  }
+
+// Méthode pour récupérer les réponses (statut 'Répondu') agrégées par date
+  Future<Map<String, int>> getResponsesGroupedByDate() async {
+    Map<String, int> responsesByDate = {};
+
+    try {
+      QuerySnapshot querySnapshot =
+          await demandeCollection.where('statut', isEqualTo: 'Répondu').get();
+      for (var doc in querySnapshot.docs) {
+        DateTime date = (doc['dateSoumission'] as Timestamp).toDate();
+        String dateStr = DateFormat('yyyy-MM-dd').format(date);
+        responsesByDate.update(dateStr, (value) => value + 1,
+            ifAbsent: () => 1);
+      }
+    } catch (e) {
+      print('Erreur lors de l\'agrégation des réponses par date : $e');
+    }
+
+    return responsesByDate;
+  }
+
+
+
 }
-
-
-
-
-
 
 
   

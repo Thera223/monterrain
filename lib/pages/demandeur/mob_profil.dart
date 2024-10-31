@@ -236,15 +236,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         centerTitle: true,
         title: Text(
-          'Mon Profil',
+          'PROFIL',
           style: TextStyle(
-            fontSize: 18,
             fontWeight: FontWeight.bold,
+            letterSpacing: 2,
             color: Colors.black,
           ),
         ),

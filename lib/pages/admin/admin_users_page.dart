@@ -620,7 +620,7 @@ class _UsersPageState extends State<UsersPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text('Gestion des utilisateurs'), // Titre de la page
-        backgroundColor:couleurprincipale, // Couleur de l'AppBar
+        // backgroundColor:couleurprincipale, // Couleur de l'AppBar
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: userService

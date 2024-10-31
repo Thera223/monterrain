@@ -44,11 +44,11 @@ class _ConseilsPageState extends State<ConseilsPage> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
         centerTitle: true,
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
       ),

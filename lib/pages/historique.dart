@@ -105,7 +105,7 @@ class _LogsPageState extends State<LogsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         automaticallyImplyLeading: false,
         title: Text('Historique des actions'),
       ),

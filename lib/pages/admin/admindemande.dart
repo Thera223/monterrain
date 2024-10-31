@@ -26,7 +26,7 @@ class _AdminDemandesPageState extends State<AdminDemandesPage> {
         automaticallyImplyLeading: false,
         title: Text('Toutes les Demandes',
             ),
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         centerTitle: false, // Centrer le titre de l'appBar
       ),
       body: FutureBuilder<List<Demande>>(

@@ -43,7 +43,7 @@ class _ChefPersonnelDemandesPageState extends State<ChefPersonnelDemandesPage> {
               color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
       ),
@@ -366,8 +366,7 @@ void assignerDemande(BuildContext context, Demande demande, LogService logServic
   );
 }
 
-  }
-
+}
 
 
 

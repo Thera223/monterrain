@@ -309,9 +309,10 @@ class ParcelleCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text('Voir détails'),
+                    child: Text('Voir détails',style: TextStyle(color: Colors.white)), ),
+                    
                   ),
-                ),
+                
               ],
             ),
           ),

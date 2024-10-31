@@ -43,11 +43,7 @@ class _LoginPageMobileState extends State<LoginPageMobile>
     final userService = Provider.of<UserService>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-      ),
+      
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),

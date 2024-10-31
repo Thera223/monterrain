@@ -201,8 +201,13 @@ class _PersonnelProfilePageState extends State<PersonnelProfilePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: couleurprincipale,
-        title: Text('Mon Profil'),
+        // backgroundColor: couleurprincipale,
+        title: Text('Mon Profil',  style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            color: Colors.black,
+          ),
+        ),
         centerTitle: true,
       ),
       body: isLoading

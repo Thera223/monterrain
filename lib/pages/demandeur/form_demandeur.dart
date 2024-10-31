@@ -274,9 +274,6 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
         // Champ Localité
         Row(
           children: [
-            Icon(Icons.location_city,
-                size: 24, color: couleurprincipale), // Icône pour localité
-            SizedBox(width: 8),
             Expanded(
               child: DropdownButtonFormField<String>(
                 value: _selectedLocalite,
@@ -295,11 +292,14 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
                 decoration: InputDecoration(
                   labelText: 'Localité',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.location_city,
+                      size: 24, color: couleurprincipale),
                 ),
               ),
             ),
           ],
-        ),
+        )
+
       ],
     );
   }
@@ -319,11 +319,15 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
             Text(
               'Sélectionnez les types de demande :',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: MediaQuery.of(context).size.width *
+                    0.045, // Taille de police responsive
                 fontWeight: FontWeight.bold,
                 color: couleurprincipale,
               ),
+              overflow: TextOverflow
+                  .ellipsis, // Ajoute une troncature si le texte est trop long
             ),
+
           ],
         ),
         SizedBox(height: 16),
@@ -470,12 +474,28 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.popUntil(context, ModalRoute.withName('/dashboard'));
-          },
-          child: Text('Retour à l\'accueil'),
-        ),
+  Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: couleurprincipale,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/dashboard'));
+            },
+            child: Text(
+              'Retour à l\'accueil',
+              style: TextStyle(
+                color: Colors.white, // Assure que le texte est en blanc
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        )
+
       ],
     );
   }
@@ -491,8 +511,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
       case 2:
         return _buildStep3();
       case 3:
-        _submitDemande(
-            logService); // Envoi des données à Firebase lors de la confirmation
+  
         return _buildStep4();
       default:
         return _buildStep1();
@@ -504,7 +523,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
     
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: couleurprincipale,
+        // backgroundColor: couleurprincipale,
         title: Text('Soumission de demande'),
       ),
       body: SingleChildScrollView(
@@ -520,67 +539,127 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Bouton "Retour" (affiché sauf à la première étape)
-                  if (_currentStep > 0)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: couleurprincipale,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                  if (_currentStep > 0 && _currentStep < 3 )
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: couleurprincipale,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentStep--; // Revenir à l'étape précédente
+                            });
+                          },
+                          child: Text(
+                            'Retour',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _currentStep--; // Revenir à l'étape précédente
-                        });
-                      },
-                      child: Text('Retour'),
                     ),
 
-                  // Bouton "Suivant" (affiché sauf à la dernière étape)
-                  if (_currentStep < 3)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: couleurprincipale,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _currentStep++; // Aller à l'étape suivante
-                        });
-                      },
-                      child: Text('Suivant'),
-                    ),
+                  // Boutons "Annuler" et "Soumettre" à la troisième étape
+                  if (_currentStep == 2) ...[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: couleurprincipale,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () async {
+                            if (_isStep1And2Completed()) {
+                              final logService = Provider.of<LogService>(
+                                  context,
+                                  listen: false);
+                              await _submitDemande(logService);
 
-                  // Bouton "Soumettre" (affiché uniquement à la dernière étape)
-                  if (_currentStep == 3)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: couleurprincipale,
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                              // Passer à l'étape 4 après soumission réussie
+                              setState(() {
+                                _currentStep =
+                                    3; // Passez ici à l'étape de succès après soumission
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Veuillez remplir tous les champs obligatoires.')),
+                              );
+                            }
+                          },
+                          child: Text(
+                            'Soumettre',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        final logService =
-                            Provider.of<LogService>(context, listen: false);
-                        _submitDemande(
-                            logService); // Soumettre la demande à la dernière étape
-                      },
-                      child: Text('Soumettre'),
+                    ),
+                  ],
+
+
+                  // Bouton "Suivant" pour les étapes 1 et 2
+                  if (_currentStep < 2)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: couleurprincipale,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _currentStep++; // Aller à l'étape suivante
+                            });
+                          },
+                          child: Text(
+                            'Suivant',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ),
                 ],
-              )
+              ),
+
+
 
             ],
           ),
         ),
       ),
     );
+  }
+bool _isStep1And2Completed() {
+    // Vérification des champs de l'étape 1
+    bool step1Completed = _nomProprietaireController.text.isNotEmpty &&
+        _lieuNaissanceController.text.isNotEmpty &&
+        _adresseProprietaireController.text.isNotEmpty &&
+        _cinNinaController.text.isNotEmpty &&
+        _numParcelleController.text.isNotEmpty &&
+        _numFoliosController.text.isNotEmpty &&
+        _superficieController.text.isNotEmpty &&
+        _lieuParcelleController.text.isNotEmpty &&
+        _selectedLocalite != null;
+
+    // Vérification des champs de l'étape 2 (au moins un type de demande sélectionné)
+    bool step2Completed =
+        typesDeDemande.any((type) => type['selected'] == true);
+
+    return step1Completed && step2Completed;
   }
 
   // Barre de progression horizontale
@@ -611,7 +690,7 @@ class _SoumissionDemandePageState extends State<SoumissionDemandePage> {
           labelText: label,
           labelStyle: TextStyle(fontSize: fontSize),
           filled: true,
-          fillColor: couleurprincipale.withOpacity(0.1), // Couleur de fond légère
+          // fillColor: couleurprincipale.withOpacity(0.1), // Couleur de fond légère
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10), // Coins arrondis
           ),

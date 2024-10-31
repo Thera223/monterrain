@@ -302,8 +302,14 @@ class _DemandePageState extends State<DemandePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: couleurprincipale,
-        title: Text('Mes Demandes'),
+        // backgroundColor: couleurprincipale,
+        title: Text('DEMANDES',  style: TextStyle(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
+            color: Colors.black,
+          ),
+        ),
+        
         centerTitle: true,
       ),
       body: FutureBuilder<List<Demande>>(
@@ -351,6 +357,7 @@ class _DemandePageState extends State<DemandePage> {
                         title: Text(
                           'Nº Terrain ${demande.numParcelle ?? 'Inconnu'}',
                           style: TextStyle(fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,11 +368,14 @@ class _DemandePageState extends State<DemandePage> {
                                 Icon(Icons.calendar_today,
                                     size: 14, color: Colors.grey),
                                 SizedBox(width: 4),
-                                Text(
-                                  demande.dateSoumission != null
-                                      ? '${demande.dateSoumission!.toLocal()}'
-                                      : 'Date inconnue',
-                                  style: TextStyle(color: Colors.grey),
+                                Flexible(
+                                  child: Text(
+                                    demande.dateSoumission != null
+                                        ? '${demande.dateSoumission!.toLocal()}'
+                                        : 'Date inconnue',
+                                    style: TextStyle(color: Colors.grey),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
@@ -374,40 +384,48 @@ class _DemandePageState extends State<DemandePage> {
                                 Icon(Icons.access_time,
                                     size: 14, color: Colors.grey),
                                 SizedBox(width: 4),
-                                Text(
-                                  '14:00 PM - 16:00 PM',
-                                  style: TextStyle(color: Colors.grey),
+                                Flexible(
+                                  child: Text(
+                                    '14:00 PM - 16:00 PM',
+                                    style: TextStyle(color: Colors.grey),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),
                             SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: demande.statut == 'Répondu'
-                                  ? () {
-                                      showDetailsd(context,
-                                          demande); // Action pour voir la réponse
-                                    }
-                                  : null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFFECEAFF),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: ElevatedButton(
+                                onPressed: demande.statut == 'Répondu'
+                                    ? () {
+                                        showDetailsd(context, demande);
+                                      }
+                                    : null,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFECEAFF),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 10),
+                                  minimumSize: Size(120, 36), // Taille minimale
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
-                              ),
-                              child: Text(
-                                'Voir réponse',
-                                style: TextStyle(
-                                  color: demande.statut == 'Répondu'
-                                      ? Colors.blue
-                                      : Colors.grey,
+                                child: Text(
+                                  'Voir réponse',
+                                  style: TextStyle(
+                                    color: demande.statut == 'Répondu'
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         trailing: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
                               decoration: BoxDecoration(
@@ -427,17 +445,21 @@ class _DemandePageState extends State<DemandePage> {
                                       ? Colors.blue
                                       : Colors.red,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
+                            SizedBox(height: 8),
                             Flexible(
                               child: IconButton(
                                 icon: Icon(Icons.info_outline,
                                     color: couleurprincipale),
+                                iconSize:
+                                    20, // Ajustement de la taille de l'icône
                                 onPressed: () {
                                   showDetailsd(context, demande);
                                 },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -447,6 +469,8 @@ class _DemandePageState extends State<DemandePage> {
               );
             },
           );
+
+
         },
       ),
       floatingActionButton: FloatingActionButton(

@@ -184,7 +184,7 @@ notifyListeners();
       if (userToDelete != null && currentUser != null) {
         await _usersCollection.doc(userId).delete();
 
-       
+      
 
         notifyListeners();
         print("Utilisateur supprimé avec succès.");
@@ -273,6 +273,42 @@ Future<List<Map<String, dynamic>>> getPersonnelsByChef(String chefId) async {
     try {
       QuerySnapshot querySnapshot =
           await FirebaseFirestore.instance.collection('users').get();
+      return querySnapshot
+          .size; // Retourne le nombre de documents (utilisateurs)
+    } catch (e) {
+      print("Erreur lors de la récupération du nombre d'utilisateurs : $e");
+      return 0;
+    }
+  }
+
+
+  Future<String?> getLocaliteForChef(String chefId) async {
+    try {
+      final chefDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(chefId)
+          .get();
+
+      if (chefDoc.exists && chefDoc.data()?['role'] == 'chef_personnel') {
+        return chefDoc
+            .data()?['localite']; // Retourne la localité associée au chef
+      } else {
+        print("Chef non trouvé ou rôle incorrect.");
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération de la localité du chef: $e');
+    }
+    return null;
+  }
+
+    // Ajoute cette méthode pour récupérer le nombre total d'utilisateurs
+  Future<int> getPersonnelsCount(String chefId) async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('users')
+          .where('role', isEqualTo: 'personnel')
+          .where('chefId', isEqualTo: chefId) 
+          .get();
       return querySnapshot
           .size; // Retourne le nombre de documents (utilisateurs)
     } catch (e) {

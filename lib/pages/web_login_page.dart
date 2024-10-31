@@ -14,18 +14,14 @@ class LoginPageWeb extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          Image.asset(
-            'assets/images/logo.png', // Assurez-vous que l'image existe
-            width: 40,
-            height: 40,
-          ),
+        
           // Left side: Image and illustration
           Expanded(
             child: Container(
               color: Colors.white,
               child: Center(
                 child: Image.asset(
-                  'assets/images/login.png', // Image file path
+                  'assets/images/log.png', // Image file path
                   height: 400, // Adjust the height as needed
                 ),
               ),
